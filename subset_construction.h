@@ -42,5 +42,7 @@ void print_nfa(Graph *nfa);
 
 void eps_closure();
 
+int free_memory(Graph *nfa);
+
 
 #endif //PROGETTO_SUBSET_CONSTRUCTION_H

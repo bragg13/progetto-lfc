@@ -51,8 +51,8 @@ void get_input(Graph *nfa) {
 
 void print_nfa(Graph *nfa) {
     printf("\n");
-    int i=0;
-    int j=0;
+    int i;
+    int j;
     for (i=0; i<nfa->states_no; i++) {
         printf("State: %d\n", i);
         
@@ -63,4 +63,20 @@ void print_nfa(Graph *nfa) {
         
         printf("\n");
     }
+}
+
+int free_memory(Graph *nfa) {
+    int i, j;
+    // deallocate edge array
+    for (i=0; i<nfa->states_no; i++) {
+        free(nfa->states[i].edges);
+    }
+
+    // deallocate states
+    free(nfa->states);
+
+    // deallocate nfa itself
+    free(nfa);
+
+    return 0;
 }
