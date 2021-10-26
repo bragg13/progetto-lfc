@@ -1,0 +1,3 @@
+/home/andrea/Appunti/LFC/Progetto/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/andrea/Appunti/LFC/Progetto/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/andrea/Appunti/LFC/Progetto/cmake-build-debug/CMakeFiles/Progetto.dir
