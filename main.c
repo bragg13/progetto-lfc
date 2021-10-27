@@ -4,6 +4,7 @@
 #include <string.h>
 #include "set.h"
 #include "subset_construction.h"
+#include "stack.h"
 
 int main(int argc, char **argv) {
     // set A, B, C, D;          // TODO: replace A, B, C with *A, *B, *C then remove &
@@ -40,9 +41,25 @@ int main(int argc, char **argv) {
 
     // printf("\n\n\n");
 
-    Graph nfa;
-    get_input(&nfa);
-    print_nfa(&nfa);
+    // Graph nfa;
+    // get_input(&nfa);
+    // print_nfa(&nfa);
     
+    Stack stack;
+    init_stack(&stack, 5);
+    print_stack(&stack);
+
+    State a, b, *c;
+    a.state_id = 0;
+    b.state_id = 12;
+
+    push(&stack, &a);
+    push(&stack, &b);
+    
+    print_stack(&stack);
+
+    c = pop(&stack);
+
+    print_stack(&stack);
     return 0;
 }
