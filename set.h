@@ -1,5 +1,8 @@
-#ifndef PROGETTO_SIMPLE_SET_H
-#define PROGETTO_SIMPLE_SET_H
+#ifndef SET_H
+#define SET_H
+#include <stdlib.h>
+#include <stdio.h>
+#include "nfa.h"
 
 #define SET_TRUE 1
 #define SET_FALSE 0
@@ -7,40 +10,27 @@
 #define SET_ERROR -1
 #define SET_NULL_VALUE -1
 
-typedef struct node {
-    int value;
-    struct node* next;
-} node;
-
-typedef struct node* nodeptr;
-
-typedef struct set{
+typedef struct Set {
     unsigned int size, length;
     char name[10];
-    struct node* head;
-} set;
-
-
-/**
- * Creates new node
- */
-int create_node (nodeptr _node, int value);
+    State *states;
+} Set;
 
 /**
- * Initializes new set
+ * Initializes new Set
 */
-int init_set(set *set, unsigned int size, const char *name);
+int init_set(Set *set, unsigned int size, const char *name);
 
 
 /**
  * Union operation.
 */ 
-int set_union(set *res_set, set *set1, set *set2);
+int set_union(Set *res_set, Set *set1, Set *set2);
 
 /**
  * Intersection operation.
  */ 
-int set_intersection(set *res_set, set *set1, set *set2);
+int set_intersection(Set *res_set, Set *set1, Set *set2);
 
 /**
  * Complements operation.
@@ -54,13 +44,13 @@ int set_cartesian_product();
 
 
 /**
- * Checks if a node is in the set.
+ * Checks if a Node is in the set.
  * 
  * Returns:
  *  SET_TRUE if the set contains the element
  *  SET_FALSE if not
  */
-int set_contains(set *set, nodeptr el);
+int set_contains(Set *set, State el);
 
 /**
  * Add an element to the set.
@@ -69,11 +59,11 @@ int set_contains(set *set, nodeptr el);
  *  SET_SUCCESS if the operation was successful
  *  SET_ERROR if there was an error
  */
-int set_add_element(set* _set, nodeptr el);
+int set_add_element(Set *set, State el);
 
 
-int set_remove_element(set* _set, nodeptr el);
+int set_remove_element(Set *set, State* el);
 
-int set_to_string(set* _set);
+int set_to_string(Set *set);
 
 #endif
