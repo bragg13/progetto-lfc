@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nfa.h"
+#include "set.h"
 
 /* Get input from a file and make it an NFA */
 void get_input(NFA *nfa) {
@@ -77,4 +78,15 @@ int free_memory(NFA *nfa) {
     free(nfa);                          // deallocate nfa itself
     
     return 0;
+}
+
+/*  iterate through the nfa states; if find an initial state, 
+    add it to the set */
+void nfa_get_initial_state(NFA *nfa, Set *set) {
+    int i;
+    for (i=0; i<nfa->states_no; i++) {
+        if (nfa->states[i].state_type == 0) {
+            set_add_element(set, nfa->states[i]);
+        }
+    }
 }

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void eps_construction();
+void eps_closure(State *start_state, NFA *nfa, Set *closure_set /*TODO: int symbol*/);
 
 void subset_construction();
 

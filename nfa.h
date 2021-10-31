@@ -41,5 +41,6 @@ void print_nfa(NFA *nfa);
 
 int free_memory(NFA *nfa);
 
+void nfa_get_initial_state(NFA *nfa, Set *set);
 
 #endif // NFA_H
