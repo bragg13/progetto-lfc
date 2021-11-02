@@ -64,6 +64,6 @@ int set_add_element(Set *set, State el);
 
 int set_remove_element(Set *set, State* el);
 
-int set_to_string(Set *set);
+int set_print(Set *set);
 
 #endif

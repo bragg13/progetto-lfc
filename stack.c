@@ -1,21 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "stack.h"
+#include "nfa.h"
+
 
 /* Initializes a stack. */
-void init_stack(Stack *stack, int capacity) {
+Stack* init_stack(unsigned int capacity) {
+    Stack *stack = (Stack*) malloc(sizeof(Stack));
     stack->capacity = capacity;
     stack->size = 0;
-    stack->states = malloc(sizeof(State*)*capacity);
+    stack->states = (State*) malloc(sizeof(State)*capacity);
+    return stack;
 }
 
 /* Couple of useful functions */ 
-int isEmpty(Stack *stack) { return (stack->size == 0) ? 1 : 0; }
-int isFull(Stack *stack) { return (stack->size == stack->capacity) ? 1 : 0; }
+int stack_is_empty(Stack *stack) { return (stack->size == 0) ? 1 : 0; }
+int stack_is_full(Stack *stack) { return (stack->size == stack->capacity) ? 1 : 0; }
 
 /* Push function to add value to stack */
-void push(Stack *stack, State *state) {
-    if (isFull(stack)) {
+void stack_push(Stack *stack, State state) {
+    if (stack_is_full(stack)) {
         printf("size > capacity");
         return;
     }
@@ -23,20 +27,22 @@ void push(Stack *stack, State *state) {
     int i = stack->size;
     stack->states[i] = state;
     stack->size++;
+    printf("pushed elemnt with id %d\n", state.state_id);
 }
 
 
 /* Push function to add value to stack */
-State* pop(Stack *stack) {
-    if (isEmpty(stack)) {
+State stack_pop(Stack *stack) {
+    if (stack_is_empty(stack)) {
         printf("cant pop nothing");
-    } else {
-        int i = stack->size;
-        State *s = stack->states[i];
-        stack->size--;
+        State s; s.state_id = -1;
         return s;
-    }
+    } 
 
+    int i = stack->size-1;
+    State s = stack->states[i];
+    stack->size--;
+    return s;
 }
 
 /* Prints a stack structure */
@@ -47,6 +53,6 @@ void print_stack(Stack *stack) {
     int i;
 
     for (i=0; i<size; i++) {
-        printf(" %d\n", stack->states[i]->state_id);
+        printf(" %d\n", stack->states[i].state_id);
     }
 }

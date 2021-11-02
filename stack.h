@@ -5,24 +5,23 @@
 #include <stdlib.h>
 #include "set.h"
 #include "nfa.h"
-#include "subset_construction.h"
 
 typedef struct Stack {
-    int capacity;
+    unsigned int capacity;
     int size;
-    State **states;     // array of stateptr
+    State *states; 
 } Stack;
 
 /* basic functions */
-void init_stack(Stack *stack, int capacity);
+Stack* init_stack(unsigned int capacity);
 void print_stack(Stack *stack);
 
 /* utils functions */
-int isEmpty(Stack *stack);
-int isEmpty(Stack *stack);
+int stack_is_full(Stack *stack);
+int stack_is_empty(Stack *stack);
 
 /* pop/push */
-void push(Stack *stack, State *state);
-State* pop(Stack *stack);
+void stack_push(Stack *stack, State state);
+State stack_pop(Stack *stack);
 
 #endif

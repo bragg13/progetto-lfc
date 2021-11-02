@@ -134,7 +134,7 @@ int set_remove_element(Set* _set, State* el) {
 
 }
 
-int set_to_string(Set* _set) {
+int set_print(Set* _set) {
     printf("\n%s: {", _set->name);
 
     // iterate through list
