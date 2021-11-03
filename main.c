@@ -26,11 +26,11 @@ int main(int argc, char **argv) {
     // eps_closure(S0.states[0], &nfa, &T0);
     // set_print(&T0);
 
-    char *str = "a|bc";
+    char *str = "(a|b)*cd";
     char output_str[strlen(str)*2];
-    add_explicit_concat(str, 4, output_str);
-
-    printf("%s", output_str);
+    add_explicit_concat(str, output_str);
+    
+    printf("%s [%d]", output_str, strlen(output_str));
     printf("\n");
     return 0;
 }
