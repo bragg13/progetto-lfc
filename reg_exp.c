@@ -70,21 +70,23 @@ char* add_explicit_concat(char *str) {
     the algorithm uses a stack, where I push symbols
     and what is called dst_str represents my output queue
 */
-void infix_to_postfix(char *src_str, char *dst_str) {
-    // string size
+char* infix_to_postfix(char *src_str) {
+    // get string size
     int src_dim = strlen(src_str);
 
-    // operator stack
+    // instantiate new string which will be the dest
+    char *dst_str = malloc(sizeof(char)*src_dim+1);     // DEALLOC
+
+    // create a stack where to put operators
     IntStack *stack = init_int_stack(src_dim);         // max dimension
 
+    // iterate through expression
     int i, j=0;
     for (i=0; i<src_dim; i++) {
-        printf("symboL: %c\n", src_str[i]);
-
-        /* === OPERATOR ==== */
+        /* === typeof(symbol) = OPERATOR ==== */
         if (src_str[i] == '|' || src_str[i] == '.' || src_str[i] == '*') {
 
-            /* === SYMBOL && LEFT PARENTHESIS ON STACK === */
+            /* === LEFT PARENTHESIS ON STACK === */
             if ( !int_stack_is_empty(stack) && ((char)int_stack_peek(stack))=='(' ) {
 
                 // push the symbol onto the stack
@@ -97,12 +99,10 @@ void infix_to_postfix(char *src_str, char *dst_str) {
 
                 // remove the operator from the top of the operator stack and append it to the output queue. 
                 char popped_operator = (char) int_stack_pop(stack);
-                printf("theres an op with more priority: %c\n", popped_operator);
                 dst_str[j++] = popped_operator;
             
             }
 
-            printf("no more op with more priority, pushing this one\n");
             int_stack_push(stack, src_str[i]);
         }
 
@@ -130,8 +130,6 @@ void infix_to_postfix(char *src_str, char *dst_str) {
             dst_str[j++] = src_str[i];
         }
 
-        print_int_stack(stack, 1);
-        printf("===\n");
     }
     
 
@@ -143,8 +141,9 @@ void infix_to_postfix(char *src_str, char *dst_str) {
 
     // add string terminator
     dst_str[src_dim] = '\0';
-    printf("%s", dst_str);
 
-    
+    // free old string and return new one
+    free(src_str);
+    return dst_str;
 
 }

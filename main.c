@@ -17,6 +17,9 @@ int main(int argc, char **argv) {
     str = add_explicit_concat(str);
     printf("%s\n", str);
 
+    // transform the xpression to postfix
+    str = infix_to_postfix(str);
+    printf("%s\n", str);
 
     // char str_c[strlen(str)*2];
     

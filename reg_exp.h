@@ -12,6 +12,6 @@ void parse_string(char *str, unsigned int dim);
 char* add_explicit_concat(char *str);
 
 /* convert regular expression to postfix reverse polish notation */
-void infix_to_postfix(char *src_str, char *dst_str);
+char* infix_to_postfix(char *src_str);
 
 #endif
