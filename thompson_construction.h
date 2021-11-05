@@ -11,16 +11,20 @@ void eps_closure(State start_state, NFA *nfa, Set *closure_set /*TODO: int symbo
 /* input management */
 char* get_input();
 
-// void translateInput();
+NFA* nfa_build(char *reg_exp);
+NFA* nfa_create(char symbol);
 
+NFA* nfa_concat();
+NFA* nfa_union();
+NFA* nfa_closure();
 
 /* function prototypes */
 void print_nfa(NFA *nfa);
 
 int free_memory(NFA *nfa);
 
-void nfa_get_initial_state(NFA *nfa, Set *set);
+// void nfa_get_initial_state(NFA *nfa, Set *set);
 
-State get_state_by_id(NFA *nfa, int id);
+// State get_state_by_id(NFA *nfa, int id);
 
 #endif // end THOMPSON_CONSTRUCTION_H

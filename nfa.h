@@ -25,7 +25,7 @@ typedef struct State {
 typedef struct Edge {
     int src;
     int dst;
-    int val;                    // TODO: should not be limited to int
+    char val;
 } Edge;
 
 #endif // NFA_H

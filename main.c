@@ -21,12 +21,9 @@ int main(int argc, char **argv) {
     str = infix_to_postfix(str);
     printf("%s\n", str);
 
-    // char str_c[strlen(str)*2];
-    
-    // printf("%s [%d]\n", str_c, strlen(str_c));
-    // char str_p[strlen(str_c)];
+    // construct the NFA
+    NFA final_nfa = nfa_build(str);
 
-    // infix_to_postfix(str_c, str_p);
     printf("\n");
     return 0;
 }

@@ -4,9 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* utils function to get priority of an operator */
 int get_priority(char c);
-
-void parse_string(char *str, unsigned int dim);
 
 /* add '.' to explicit the concatenation operator to regular expressions which may not have it */
 char* add_explicit_concat(char *str);
