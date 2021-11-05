@@ -9,7 +9,7 @@
 void eps_closure(State start_state, NFA *nfa, Set *closure_set /*TODO: int symbol*/);
 
 /* input management */
-void get_input(NFA *nfa);
+char* get_input();
 
 // void translateInput();
 

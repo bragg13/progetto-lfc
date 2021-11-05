@@ -31,3 +31,27 @@ Definizione e implementazione di un Set attraverso un array.
 ## stack.h e stack.c
 
 ## subset_construction.h e subset_construction.c
+
+
+
+
+The implementation is based on original Ken Thompson's
+The algorithm aims to transform a regular expression into an equivalent NFA (non deterministic finite automaton)
+It works recursively taking as input a regular expression casted to postfix notation through the *** algorithm.
+It parses the regular expression into its constituient subespressions, then applies operators to connect them into a bigger one.
+
+BASIS:
+The automaton of the word "a" can be defined as:
+    2 1     # 2 states, 1 transition
+    i 0 1   # state name: i, initial, 1 transition out
+    f 2 0   
+    i f 0   # trans type: eps, from i to f
+
+INDUCTION:
+Having t
+
+Rules:
+    - the number of transitions leaving any state is max 2
+    
+
+[from Wikipedia, https://en.wikipedia.org/wiki/Thompson%27s_construction]

@@ -46,51 +46,32 @@ void subset_construction(NFA *nfa, Set *alphabet) {
 
 }
 
-/* Get input from a file and make it an NFA */
-void get_input(NFA *nfa) {
+
+char* get_input() {
     FILE *fp;
-    int states_no;      // number of states
-    int edges_no;       // number of edges
-    int initial_no;     // number of initial states
-    int default_no;     // number of default states
-    int final_no;       // number of final states
+    int length;
 
     fp = fopen("input.txt", "r");
     if (fp == NULL) {
         perror("Failed opening file");
-        // return SC_ERROR;
+        return NULL;
     }
 
-    // number of states and edges - TODO: could calculate
-    fscanf(fp, "%d %d", &states_no, &edges_no);
-    nfa->states = malloc(sizeof(State)*states_no);              // allocate an array of states ie the nfa
-    nfa->states_no = states_no;
+    fscanf(fp, "%d", &length);
 
-    // number of edges per state + state type
-    int i;
-    int state_edges_no, state_type;
-    for (i=0; i<states_no; i++) {
-        fscanf(fp, "%d %d", &state_edges_no, &state_type);
-
-        nfa->states[i].edges = malloc(sizeof(Edge)*state_edges_no);
-        nfa->states[i].state_id = i;
-        nfa->states[i].state_type = state_type;                 // conversion to enum should work
-        nfa->states[i].edges_no = 0;
+    if (length <= 0) {
+        perror("Length cant be 0 or less");
+        return NULL;
     }
 
-    // edges
-    int src, dst, val;
-    for (i=0; i<edges_no; i++) {
-        fscanf(fp, "%d %d %d", &src, &dst, &val);
-        int curr_edge_no = nfa->states[src].edges_no;           // 'cen' ie the first empty edge
-        nfa->states[src].edges[curr_edge_no].src = src;         // get 'cen' edge of node 'src' and set it up
-        nfa->states[src].edges[curr_edge_no].dst = dst;
-        nfa->states[src].edges[curr_edge_no].val = val;
-        nfa->states[src].edges_no++;                            // increment since just set up an edge
-    }
-
+    char *str = malloc(sizeof(char)*length+1);      // DEALLOC
+    fscanf(fp, "%s", str);
     fclose(fp);
+
+    str[length] = '\0';
+    return str;
 }
+
 
 /* Print a NFA */
 void print_nfa(NFA *nfa) {
