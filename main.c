@@ -13,8 +13,12 @@ int main(int argc, char **argv) {
     char *str = get_input();
     printf("%s\n", str);
 
+    // add explicit concatenation to input string
+    str = add_explicit_concat(str);
+    printf("%s\n", str);
+
+
     // char str_c[strlen(str)*2];
-    // add_explicit_concat(str, str_c);
     
     // printf("%s [%d]\n", str_c, strlen(str_c));
     // char str_p[strlen(str_c)];

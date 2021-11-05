@@ -20,12 +20,12 @@ int get_priority(char c) {
     Return:
         int - actual output string dimension, useful to reallocate
 */
-void add_explicit_concat(char *str, char *output_str) {
+char* add_explicit_concat(char *str) {
     printf("add_explicit_concat started...\n");
     
     // allocate output string with crazy size, worst case: #dim literals concatenated, aka #dim-1 '.'
     unsigned int dim = strlen(str);
-    char *output = (char*) malloc(sizeof(char)*(dim*2));
+    char *output = (char*) malloc(sizeof(char)*(dim*2));        // DEALLOC
     
     // TODO: reduce this bloatcode
     int i, j=0;
@@ -58,9 +58,10 @@ void add_explicit_concat(char *str, char *output_str) {
     
     // realloc strings so they match the right size
     output = realloc(output, sizeof(char)*(j+1));
-    strcpy(output_str, output);
+    free(str);      // cancello la stringa che ho creato prima perche ritorno quella nuova con la lunghezza sistemata
     
     printf("add_explicit_concat done.\n");
+    return output;
 }
 
 
