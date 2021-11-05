@@ -4,7 +4,7 @@
 #include <string.h>
 #include "set.h"
 #include "nfa.h"
-#include "stack.h"
+#include "state_stack.h"
 #include "reg_exp.h"
 #define NUMBER_ALPHABET_SYMBOLS 10
 
@@ -26,11 +26,14 @@ int main(int argc, char **argv) {
     // eps_closure(S0.states[0], &nfa, &T0);
     // set_print(&T0);
 
-    char *str = "(a|b)*cd";
-    char output_str[strlen(str)*2];
-    add_explicit_concat(str, output_str);
+    char *str = "a(a|b)*b";
+    char str_c[strlen(str)*2];
+    add_explicit_concat(str, str_c);
     
-    printf("%s [%d]", output_str, strlen(output_str));
+    printf("%s [%d]\n", str_c, strlen(str_c));
+    char str_p[strlen(str_c)];
+
+    infix_to_postfix(str_c, str_p);
     printf("\n");
     return 0;
 }

@@ -3,12 +3,12 @@
 #include "thompson_construction.h"
 #include "set.h"
 #include "nfa.h"
-#include "stack.h"
+#include "state_stack.h"
 
 
 void eps_closure(State start_state, NFA *nfa, Set *closure_set) { /*TODO: int symbol*/
     printf("\nstarting eps_closure...\n");
-    Stack *stack = init_stack(nfa->states_no);     // at most capacity N where N is the number of states in the NFA
+    StateStack *stack = init_stack(nfa->states_no);     // at most capacity N where N is the number of states in the NFA
     
     // store which states i already visited, so i dont push to stack duplicates
     int alreadyVisited[nfa->states_no];
