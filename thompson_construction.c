@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "thompson_construction.h"
-#include "set.h"
+// #include "set.h"
 #include "nfa.h"
 #include "string.h"
-#include "state_stack.h"
+// #include "state_stack.h"
 
+int state_id = 0;
 
 // void eps_closure(State start_state, NFA *nfa, Set *closure_set) { /*TODO: int symbol*/
 //     printf("\nstarting eps_closure...\n");
@@ -97,7 +98,23 @@ NFA* nfa_build(char *reg_exp) {
 }
 
 NFA* nfa_create(char symbol) {
+    // create NFA
+    NFA *_nfa = nfa();
 
+    // ids for creating edge
+    int initial_id = state_id++;
+    int final_id = state_id++;
+
+    _nfa->states[0] = initial_id;
+    _nfa->states[1] = final_id;
+
+    // create edge between states
+    Edge *_edge = edge(initial_id, final_id, symbol);
+    
+    // put stuff together
+    _nfa->transitions[0] = _edge;
+    _nfa->initial_state = initial_id;
+    _nfa->final_state = final_id;
 }
 
 
@@ -116,42 +133,40 @@ NFA* nfa_closure() {
 
 
 /* Print a NFA */
-void print_nfa(NFA *nfa) {
+void nfa_print(NFA *nfa) {
     printf("\n");
     int i;
     int j;
+    printf("====================\n");
+    printf("Initial state: %d, Final state: %d\n", nfa->initial_state, nfa->final_state);
+    
+    printf("States: ");
     for (i=0; i<nfa->states_no; i++) {
-        printf("State: %d", i);
-        switch (nfa->states[i].state_type) {
-        case 0:
-            printf(" - initial\n");
-            break;
-        case 1:
-            printf(" - default\n");
-            break;
-        case 2:
-            printf(" - final\n");
-            break;
-        }
-
-        for (j=0; j<nfa->states[i].edges_no; j++) {
-            Edge e = nfa->states[i].edges[j];
-            printf("\t- %d to %d [%d]\n", e.src, e.dst, e.val);
-        }
-        
-        printf("\n");
+        printf("%d ", i);
     }
+    printf("\n");
+    printf("Edges: \n");
+    
+    for (i=0; i<nfa->trans_no; i++) {
+        Edge *e = nfa->transitions[i];
+        printf("%d --%d--> %d\n", e->src, e->val, e->dst);
+    }
+
+    printf("====================\n");
+
 }
 
 /* Free up memory by deallocating NFA */
 int free_memory(NFA *nfa) {
     int i, j;
     
-    // deallocate edge array
-    for (i=0; i<nfa->states_no; i++) {
-        free(nfa->states[i].edges);
-    }
     free(nfa->states);                  // deallocate states
+    
+    // deallocate edge array
+    for (i=0; i<nfa->trans_no; i++) {
+        free(nfa->transitions[i]);
+    }
+    
     free(nfa);                          // deallocate nfa itself
     
     return 0;

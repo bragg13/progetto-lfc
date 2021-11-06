@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include "set.h"
+// #include "set.h"
 #include "thompson_construction.h"
-#include "state_stack.h"
+// #include "state_stack.h"
 #include "reg_exp.h"
 #define NUMBER_ALPHABET_SYMBOLS 10
 
@@ -22,7 +22,8 @@ int main(int argc, char **argv) {
     printf("%s\n", str);
 
     // construct the NFA
-    NFA final_nfa = nfa_build(str);
+    NFA *final_nfa = nfa_build(str);
+    nfa_print(&final_nfa);
 
     printf("\n");
     return 0;

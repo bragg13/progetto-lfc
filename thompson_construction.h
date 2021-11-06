@@ -4,9 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nfa.h"
-#include "set.h"
 
-void eps_closure(State start_state, NFA *nfa, Set *closure_set /*TODO: int symbol*/);
+// void eps_closure(State start_state, NFA *nfa, Set *closure_set /*TODO: int symbol*/);
 
 /* input management */
 char* get_input();
@@ -19,7 +18,7 @@ NFA* nfa_union();
 NFA* nfa_closure();
 
 /* function prototypes */
-void print_nfa(NFA *nfa);
+void nfa_print(NFA *nfa);
 
 int free_memory(NFA *nfa);
 

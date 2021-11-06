@@ -26,14 +26,14 @@ void int_stack_push(IntStack *stack, int num) {
     int i = stack->size;
     stack->stack[i] = num;
     stack->size++;
-    printf("pushed elemnt with id %d\n", num);
+    // printf("pushed elemnt with id %d\n", num);
 }
 
 
 /* Push function to add value to stack */
 int int_stack_pop(IntStack *stack) {
     if (int_stack_is_empty(stack)) {
-        printf("cant pop nothing");
+        // printf("cant pop nothing");
         return -1;
     } 
 
@@ -46,7 +46,7 @@ int int_stack_pop(IntStack *stack) {
 /* Returns the element at the top without removing it */
 int int_stack_peek(IntStack *stack) {
     if (int_stack_is_empty(stack)) {
-        printf("cant peek");
+        // printf("cant peek");
         return -1;
     } 
 

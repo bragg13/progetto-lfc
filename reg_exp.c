@@ -1,5 +1,5 @@
 #include "reg_exp.h"
-#include "set.h"
+// #include "set.h"
 #include "int_stack.h"
 
 int get_priority(char c) {
@@ -58,6 +58,7 @@ char* add_explicit_concat(char *str) {
     
     // realloc strings so they match the right size
     output = realloc(output, sizeof(char)*(j+1));
+    output[j] = '\0';                                       // set string terminator
     free(str);      // cancello la stringa che ho creato prima perche ritorno quella nuova con la lunghezza sistemata
     
     printf("add_explicit_concat done.\n");
@@ -139,7 +140,7 @@ char* infix_to_postfix(char *src_str) {
         dst_str[j++] = popped_operator;
     }
 
-    // add string terminator
+    // set string terminator
     dst_str[src_dim] = '\0';
 
     // free old string and return new one
