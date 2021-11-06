@@ -23,8 +23,11 @@ int main(int argc, char **argv) {
 
     // construct the NFA
     NFA *final_nfa = nfa_build(str);
-    nfa_print(&final_nfa);
+    nfa_print(final_nfa);
 
     printf("\n");
     return 0;
 }
+
+
+// TODO: if a number is in input is converted to char

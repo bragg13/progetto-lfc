@@ -15,10 +15,6 @@ typedef struct NFA {
     int initial_state, final_state;
 } NFA;
 
-// typedef struct State {
-//     int state_id;
-// } State;
-
 typedef struct Edge {
     int src;
     int dst;
@@ -27,5 +23,9 @@ typedef struct Edge {
 
 NFA *nfa();
 Edge *edge(int initial_id, int final_id, char symbol);
+
+void nfa_print(NFA *nfa);
+
+int free_memory(NFA *nfa);
 
 #endif // NFA_H

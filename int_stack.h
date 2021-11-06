@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-// #include "set.h"
 #include "nfa.h"
 
 typedef struct IntStack {

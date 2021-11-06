@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "thompson_construction.h"
-// #include "set.h"
 #include "nfa.h"
 #include "string.h"
-// #include "state_stack.h"
+#include "int_stack.h"
+#include "nfa_stack.h"
 
 int state_id = 0;
 
@@ -75,31 +75,53 @@ NFA* nfa_build(char *reg_exp) {
     // il massimo numero di stati che puo avere e' 2k dove k e' il numero di simboli
     int i;
     char symbol;
-    NFA *temp, *final;
+
+    NfaStack *nfa_stack = init_nfa_stack(strlen(reg_exp));
+    NFA *temp1 = malloc(sizeof(NFA)); temp1 = NULL;
+    NFA *temp2 = malloc(sizeof(NFA)); temp2 = NULL;
+    NFA *final;
 
     // iterate through the regular expression
     for (i=0; i<strlen(reg_exp); i++) {
         symbol = reg_exp[i];
         
         if (symbol == '|') {
-            temp = nfa_union();    
-        
+            // double pop from the stack, apply operation and push the result to stack
+            temp1 = nfa_stack_pop(nfa_stack);
+            temp2 = nfa_stack_pop(nfa_stack);
+            NFA *temp = nfa_union(temp2, temp1);
+            nfa_stack_push(nfa_stack, temp);
+
         } else if (symbol == '.') {
-            temp = nfa_concat();
+            // double pop from the stack, apply operation and push the result to stack
+            temp1 = nfa_stack_pop(nfa_stack);
+            temp2 = nfa_stack_pop(nfa_stack);
+            NFA *temp = nfa_concat(temp2, temp1);
+            nfa_stack_push(nfa_stack, temp);
         
         } else if (symbol == '*') {
-            temp = nfa_closure();
-
+            // double pop from the stack, apply operation and push the result to stack
+            temp1 = nfa_stack_pop(nfa_stack);
+            temp2 = nfa_stack_pop(nfa_stack);
+            NFA *temp = nfa_closure(temp2, temp1);
+            nfa_stack_push(nfa_stack, temp);
+        
         } else {
-            temp = nfa_create(symbol);
-
+            // create the nfa and push it to the stack
+            NFA *temp = nfa_create(symbol);
+            nfa_stack_push(nfa_stack, temp);
+            printf("created nfa by character and pushed\n");
+            nfa_print(temp);
         }    
     }
+
+    // there's only one element remaining which is the resulting nfa
+    return nfa_stack_pop(nfa_stack);
 }
 
 NFA* nfa_create(char symbol) {
     // create NFA
-    NFA *_nfa = nfa();
+    NFA *_nfa = nfa(2, 1);
 
     // ids for creating edge
     int initial_id = state_id++;
@@ -118,8 +140,43 @@ NFA* nfa_create(char symbol) {
 }
 
 
-NFA* nfa_concat() {
+/*  The initial state of N(s) is the initial state of the whole NFA. 
+    The final state of N(s) becomes the initial state of N(t). 
+    The final state of N(t) is the final state of the whole NFA. */
+NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
+    int result_states_no = nfa1->states_no + nfa2->states_no;
+    int result_trans_no = nfa1->trans_no + nfa2->trans_no+1;
+    NFA *result = nfa(result_states_no, result_trans_no);
 
+    // copy nfa1 and nfa2 states into result
+    int i, j=0;
+    for (i=0; i<nfa1->states_no; i++) {
+        result->states[j++] = nfa1->states[i];
+    }
+    for (i=0; i<nfa2->states_no; i++) {
+        result->states[j++] = nfa2->states[i];
+    }
+
+    // copy edges into result
+    j=0;
+    for (i=0; i<nfa1->trans_no; i++) {
+        result->transitions[j++] = nfa1->transitions[i];
+    }
+    for (i=0; i<nfa2->trans_no; i++) {
+        result->transitions[j++] = nfa2->transitions[i];
+    }
+
+    // create new edge from nfa1.final to nfa2.initial
+    Edge *e = edge(nfa1->final_state, nfa2->initial_state, 'e');
+    result->transitions[j] = e;
+
+    // initial state of result is the inital state of nfa1
+    result->initial_state = nfa1->initial_state;
+
+    // final state of result is the final state of nfa2
+    result->final_state = nfa2->final_state;
+
+    return result;
 }
 
 NFA* nfa_union() {
@@ -129,69 +186,3 @@ NFA* nfa_union() {
 NFA* nfa_closure() {
 
 }
-
-
-
-/* Print a NFA */
-void nfa_print(NFA *nfa) {
-    printf("\n");
-    int i;
-    int j;
-    printf("====================\n");
-    printf("Initial state: %d, Final state: %d\n", nfa->initial_state, nfa->final_state);
-    
-    printf("States: ");
-    for (i=0; i<nfa->states_no; i++) {
-        printf("%d ", i);
-    }
-    printf("\n");
-    printf("Edges: \n");
-    
-    for (i=0; i<nfa->trans_no; i++) {
-        Edge *e = nfa->transitions[i];
-        printf("%d --%d--> %d\n", e->src, e->val, e->dst);
-    }
-
-    printf("====================\n");
-
-}
-
-/* Free up memory by deallocating NFA */
-int free_memory(NFA *nfa) {
-    int i, j;
-    
-    free(nfa->states);                  // deallocate states
-    
-    // deallocate edge array
-    for (i=0; i<nfa->trans_no; i++) {
-        free(nfa->transitions[i]);
-    }
-    
-    free(nfa);                          // deallocate nfa itself
-    
-    return 0;
-}
-
-// /*  iterate through the nfa states; if find an initial state, 
-//     add it to the set */
-// void nfa_get_initial_state(NFA *nfa, Set *set) {
-//     int i;
-//     for (i=0; i<nfa->states_no; i++) {
-//         if (nfa->states[i].state_type == 0) {
-//             set_add_element(set, nfa->states[i]);
-//         }
-//     }
-// }
-
-// State get_state_by_id(NFA *nfa, int id) {
-//     int i;
-//     State state;        // may give problems if error
-//     int found = 0;
-//     for (i=0; i<nfa->states_no && !found; i++) {
-//         if (nfa->states[i].state_id == id) {
-//             found = 1;
-//             state = nfa->states[i];
-//         }
-//     }
-//     return state;
-// }
