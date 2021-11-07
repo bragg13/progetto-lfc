@@ -67,8 +67,7 @@ NFA* nfa_build(char *reg_exp) {
         } else if (symbol == '*') {
             // double pop from the stack, apply operation and push the result to stack
             temp1 = nfa_stack_pop(nfa_stack);
-            temp2 = nfa_stack_pop(nfa_stack);
-            NFA *temp = nfa_closure(temp2, temp1);
+            NFA *temp = nfa_kleene(temp1);
             nfa_stack_push(nfa_stack, temp);
         
         } else {
@@ -209,6 +208,6 @@ NFA* nfa_union(NFA *nfa1, NFA *nfa2) {
 
 }
 
-NFA* nfa_closure() {
+NFA* nfa_kleene(NFA *nfa) {
 
 }

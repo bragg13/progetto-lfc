@@ -13,14 +13,12 @@ char* get_input();
 NFA* nfa_build(char *reg_exp);
 NFA* nfa_create(char symbol);
 
-NFA* nfa_concat();
-NFA* nfa_union();
-NFA* nfa_closure();
+NFA* nfa_concat(NFA* nfa1, NFA* nfa2);
+NFA* nfa_union(NFA* nfa1, NFA* nfa2);
+NFA* nfa_kleene(NFA* nfa1);
 
 /* function prototypes */
 void nfa_print(NFA *nfa);
-
-int free_memory(NFA *nfa);
 
 // void nfa_get_initial_state(NFA *nfa, Set *set);
 
