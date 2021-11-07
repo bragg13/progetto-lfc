@@ -26,37 +26,37 @@ void nfa_print(NFA *nfa) {
     printf("\n");
     int i;
     int j;
-    printf("====================\n");
-    printf("Initial state: %d, Final state: %d\n", nfa->initial_state, nfa->final_state);
+    printf("========== NFA ==========\n");
+    printf("| Initial state: %d, Final state: %d\n", nfa->initial_state, nfa->final_state);
     
-    printf("States: ");
+    printf("| States: ");
     for (i=0; i<nfa->states_no; i++) {
         printf("%d ", nfa->states[i]);
     }
     printf("\n");
-    printf("Edges: \n");
+    printf("| Edges: \n");
     
     for (i=0; i<nfa->trans_no; i++) {
         Edge *e = nfa->transitions[i];
-        printf("%d --%c--> %d\n", e->src, e->val, e->dst);
+        printf("| %d --%c--> %d\n", e->src, e->val, e->dst);
     }
 
-    printf("====================\n");
+    printf("=========================\n");
 
 }
 
 /* Free up memory by deallocating NFA */
-int free_memory(NFA *nfa) {
-    int i, j;
-    
-    free(nfa->states);                  // deallocate states
-    
-    // deallocate edge array
-    for (i=0; i<nfa->trans_no; i++) {
+void nfa_free(NFA *nfa) {
+    // deallocate states array
+    free(nfa->states);
+
+    // deallocate transitions array
+    int i;
+    for(i=0; i<nfa->trans_no; i++) {
         free(nfa->transitions[i]);
     }
-    
-    free(nfa);                          // deallocate nfa itself
-    
-    return 0;
+    free(nfa->transitions);
+
+    // deallocate nfa itself
+    free(nfa);
 }

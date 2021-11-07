@@ -8,42 +8,7 @@
 
 int state_id = 0;
 
-// void eps_closure(State start_state, NFA *nfa, Set *closure_set) { /*TODO: int symbol*/
-//     printf("\nstarting eps_closure...\n");
-//     StateStack *stack = init_stack(nfa->states_no);     // at most capacity N where N is the number of states in the NFA
-    
-//     // store which states i already visited, so i dont push to stack duplicates
-//     int alreadyVisited[nfa->states_no];
-//     int i;
-//     for (i=0; i<nfa->states_no; i++) {
-//         alreadyVisited[i] = 0;
-//     }
-
-//     stack_push(stack, start_state);                                        // pushing to stack the start state
-//     set_add_element(closure_set, start_state);
-//     State state;
-//     while(!stack_is_empty(stack)) {                                        // iterate through the stack while it's empty
-//         state = stack_pop(stack);                                           // got my state. now let's see where we can go from here
-//         printf("\nSTATE=%d, got %d edges from here\n", state.state_id, state.edges_no);
-//         int edges_no = state.edges_no;
-//         for (i=0; i<edges_no; i++) {                                        // iterate through states
-//             Edge e = state.edges[i];
-//             printf("\tedge: %d to %d, value=%d\n", e.src, e.dst, e.val);
-//             if (e.val == 0) {  
-//                 printf("\tthe link is epsilon, add to closure state %d\n", e.dst);                                             // if the link is epsilon
-//                 State state_to_add = get_state_by_id(nfa, e.dst);
-//                 set_add_element(closure_set, state_to_add);           // the element is in the closure, add it to set
-//                 if (!alreadyVisited[e.dst]) {
-//                     stack_push(stack, state_to_add);                              // add the state to the stack too, so we can check from there
-//                 }
-//             }
-//         }
-//         alreadyVisited[state.state_id] = 1;
-//     }
-//     printf("finished eps_closure.\n");
-
-// }
-
+// TODO: deallocate old states when creating a new one. possible only if i create new states for the result, should i?
 
 
 char* get_input() {
@@ -142,10 +107,12 @@ NFA* nfa_create(char symbol) {
 
 /*  The initial state of N(s) is the initial state of the whole NFA. 
     The final state of N(s) becomes the initial state of N(t). 
-    The final state of N(t) is the final state of the whole NFA. */
+    The final state of N(t) is the final state of the whole NFA. 
+*/
 NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
+    // creating the resulting NFA
     int result_states_no = nfa1->states_no + nfa2->states_no;
-    int result_trans_no = nfa1->trans_no + nfa2->trans_no+1;
+    int result_trans_no = nfa1->trans_no + nfa2->trans_no+1;    // adding one more transition
     NFA *result = nfa(result_states_no, result_trans_no);
 
     // copy nfa1 and nfa2 states into result
@@ -176,10 +143,69 @@ NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
     // final state of result is the final state of nfa2
     result->final_state = nfa2->final_state;
 
+
+    // free up old nfas
+    // nfa_free(nfa1);
+    // nfa_free(nfa2);
+
     return result;
 }
 
-NFA* nfa_union() {
+/*
+    ...
+*/
+NFA* nfa_union(NFA *nfa1, NFA *nfa2) {
+    // creating the resulting nfa
+    int result_states_no = nfa1->states_no + nfa2->states_no + 2;       // adding two more states
+    int result_trans_no = nfa1->trans_no + nfa2->trans_no+4;            // adding four more transitions
+    NFA *result = nfa(result_states_no, result_trans_no);
+
+    /* ===== STATES ===== */
+    // copy nfa1 and nfa2 states into result
+    int i, j=0;
+    for (i=0; i<nfa1->states_no; i++) {
+        result->states[j++] = nfa1->states[i];
+    }
+    for (i=0; i<nfa2->states_no; i++) {
+        result->states[j++] = nfa2->states[i];
+    }
+
+    // create new initial state for result
+    result->states[j++] = state_id;
+    result->initial_state = state_id++;
+
+    // create new final state for result
+    result->states[j++] = state_id;
+    result->final_state = state_id++;
+    
+    /* ===== EDGES ===== */
+    // copy edges into result
+    j=0;
+    for (i=0; i<nfa1->trans_no; i++) {
+        result->transitions[j++] = nfa1->transitions[i];
+    }
+    for (i=0; i<nfa2->trans_no; i++) {
+        result->transitions[j++] = nfa2->transitions[i];
+    }
+
+
+    // create 4 epsilon trans - 2 for each new state
+    // connect new initial state with nfa1 and nfa2 initial states
+    // connect nfa1 and nfa2 final states to new final state
+    Edge *e1 = edge(result->initial_state, nfa1->initial_state, 'e');       // res(i)->nfa1(i)
+    Edge *e2 = edge(result->initial_state, nfa2->initial_state, 'e');       // res(i)->nfa2(i)
+    Edge *e3 = edge(nfa1->final_state, result->final_state, 'e');           // nfa1(f)->res(f)
+    Edge *e4 = edge(nfa2->final_state, result->final_state, 'e');           // nfa2(f)->res(f)
+    result->transitions[j++] = e1;
+    result->transitions[j++] = e2;
+    result->transitions[j++] = e3;
+    result->transitions[j++] = e4;
+
+    // free up old nfas
+    // nfa_free(nfa1);
+    // nfa_free(nfa2);
+
+    return result;
 
 }
 

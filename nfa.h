@@ -26,6 +26,6 @@ Edge *edge(int initial_id, int final_id, char symbol);
 
 void nfa_print(NFA *nfa);
 
-int free_memory(NFA *nfa);
+void nfa_free(NFA *nfa);
 
 #endif // NFA_H
