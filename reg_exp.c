@@ -5,10 +5,10 @@
 int get_priority(char c) {
     int p;
     switch(c){
-        case '*': p=3; break;
-        case '.': p=2; break;
         case '|': p=1; break;
-        default: p=-1; break;
+        case '.': p=2; break;
+        case '*': p=3; break;
+        default: p=0; break;
     }
 
     return p;
@@ -30,29 +30,25 @@ char* add_explicit_concat(char *str) {
     // TODO: reduce this bloatcode
     int i, j=0;
     for (i=0; i<dim; i++) {
+        // add the char to output
+        output[j] = str[i];
+        j++;
+        
+        // if an operator, there wont be a concat next
         if (str[i] == '|' || str[i] == '.' || str[i] == '(') {
-            // if an operator, just add it to output since there wont be a concat next
-            output[j] = str[i];
-            j++;
+            continue;
+        } 
 
-        } else {
-            // it's a literal OR ) OR *, hence check the next char and if it's a literal too, add the '.'
-            if (i != dim-1) {
-                char next_char = str[i+1];
-                if (next_char == '|' || next_char == '.' || next_char == ')' || next_char == '*') {
-                    output[j] = str[i];
-                    j++;
-                } else {
-                    // it's a literal or (, then let's add the '.'
-                    output[j] = str[i];
-                    j++;
-                    output[j] = '.';
-                    j++;
-                }
-            } else {
-                output[j] = str[i];
-                j++;
-            }
+        // check the next char and if it's a literal too, add the '.'
+        if (i != dim-1) {
+            char next_char = str[i+1];
+            if (next_char == '|' || next_char == '.' || next_char == ')' || next_char == '*') {
+                continue;
+
+            } 
+
+            output[j] = '.';
+            j++;
         }
     }
     
@@ -87,34 +83,29 @@ char* infix_to_postfix(char *src_str) {
         /* === typeof(symbol) = OPERATOR ==== */
         if (src_str[i] == '|' || src_str[i] == '.' || src_str[i] == '*') {
 
-            /* === LEFT PARENTHESIS ON STACK === */
-            if ( !int_stack_is_empty(stack) && ((char)int_stack_peek(stack))=='(' ) {
-
-                // push the symbol onto the stack
-                dst_str[j++] = src_str[i];
-            }
-
-            /* === LESS PRIORITY ==== */
-            int priority = get_priority(src_str[i]);
-            while (!int_stack_is_empty(stack) && get_priority(int_stack_peek(stack)) >= priority ) {
+            /* === LEFT PARENTHESIS ON STACK / LESS PRIORITY === */
+            int priority = get_priority((char) src_str[i]);
+            while (!int_stack_is_empty(stack) && get_priority(int_stack_peek(stack)) >= priority && ((char)int_stack_peek(stack))!='(' ) {
 
                 // remove the operator from the top of the operator stack and append it to the output queue. 
                 char popped_operator = (char) int_stack_pop(stack);
                 dst_str[j++] = popped_operator;
-            
+
             }
 
+            // push the operator to stack
             int_stack_push(stack, src_str[i]);
+
         }
 
-        /* === SYMBOL IS ( === */
+        /* === SYMBOL IS '(' === */
         else if (src_str[i] == '(') {
             // ... push it to operator stack
             int_stack_push(stack, '(');
 
         }
 
-        /* === SYMBOL IS ) === */
+        /* === SYMBOL IS ')' === */
         else if (src_str[i] == ')') {
             // ... pop all the operators to output queue till a (
             while (int_stack_is_empty(stack)!=1 && int_stack_peek(stack) != '(' ) {
@@ -122,15 +113,15 @@ char* infix_to_postfix(char *src_str) {
                 dst_str[j++] = popped_operator;
             }
 
-            // now i have to remove the ( too
+            // also pop the ')'
             int_stack_pop(stack);
+
         }
 
         /* === LETTER === */
         else {
             dst_str[j++] = src_str[i];
         }
-
     }
     
 
