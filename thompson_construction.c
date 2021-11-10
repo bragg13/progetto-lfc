@@ -1,40 +1,35 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "thompson_construction.h"
-#include "nfa.h"
-#include "string.h"
-#include "int_stack.h"
-#include "nfa_stack.h"
 
 int state_id = 0;
 
-// TODO: deallocate old states when creating a new one. possible only if i create new states for the result, should i?
-
-
+/* Reads input file and returns the string in it */
 char* get_input() {
     FILE *fp;
     int length;
 
+    // open the file
     fp = fopen("input.txt", "r");
     if (fp == NULL) {
         perror("Failed opening file");
         return NULL;
     }
 
+    // read string length
     fscanf(fp, "%d", &length);
-
     if (length <= 0) {
         perror("Length cant be 0 or less");
         return NULL;
     }
 
+    // read the actual string
     char *str = malloc(sizeof(char)*length+1);
     fscanf(fp, "%s", str);
     fclose(fp);
 
+    // set string terminator
     str[length] = '\0';
 
-    // check if letters/numbers
+    // check if string has bad characters in it
     int i=0;
     char c;
     for (i; i<length; i++) {
@@ -42,7 +37,6 @@ char* get_input() {
         if ( (c>='A' && c<='Z') || (c>='a' && c<='z') || (c>='0' && c<='9') || c=='(' || c==')' || c=='|' || c=='.' || c=='*') {
             continue;
         }
-        printf("char: %c\n", c);
         perror("found an invalid character in the alphabet\n");
         return NULL;
     }
@@ -50,53 +44,83 @@ char* get_input() {
     return str;
 }
 
-NFA* nfa_build(char *reg_exp) {
-    // il massimo numero di stati che puo avere e' 2k dove k e' il numero di simboli
+/* Write NFA to output file */
+void write_output(NFA *nfa) {
+    FILE *fp;
     int i;
-    char symbol;
 
+    // open the file
+    fp = fopen("output.txt", "w");
+    if (fp == NULL) {
+        perror("Failed opening file");
+        return;
+    }
+
+    // prints to file the nfa
+    fprintf(fp, "========== OUTPUT NFA ==========\n");
+    fprintf(fp, "| Initial state: %d\n| Final state: %d\n", nfa->initial_state, nfa->final_state);
+    
+    fprintf(fp, "| States: [ ");
+    for (i=0; i<nfa->states_no; i++) {
+        fprintf(fp, "%d ", nfa->states[i]);
+    }
+    fprintf(fp, "]\n");
+    fprintf(fp, "| Transitions: \n");
+    
+    for (i=0; i<nfa->trans_no; i++) {
+        Edge *e = nfa->transitions[i];
+        fprintf(fp, "| %d -- %c --> %d\n", e->src, e->val, e->dst);
+    }
+
+    fprintf(fp, "================================\n");
+
+    fclose(fp);
+}
+
+/* Given a string, parse it and through Thompson Construction builds an nfa */
+NFA* nfa_build(char *reg_exp) {
     NfaStack *nfa_stack = init_nfa_stack(strlen(reg_exp));
     NFA *temp1 = malloc(sizeof(NFA)); temp1 = NULL;
     NFA *temp2 = malloc(sizeof(NFA)); temp2 = NULL;
-    NFA *final;
+    int i;
+    char symbol;
 
     // iterate through the regular expression
     for (i=0; i<strlen(reg_exp); i++) {
         symbol = reg_exp[i];
         
         if (symbol == '|') {
-            // double pop from the stack, apply operation and push the result to stack
+            // double pop from the stack, apply union and push the result to stack
             temp1 = nfa_stack_pop(nfa_stack);
             temp2 = nfa_stack_pop(nfa_stack);
             NFA *temp = nfa_union(temp2, temp1);
             nfa_stack_push(nfa_stack, temp);
 
         } else if (symbol == '.') {
-            // double pop from the stack, apply operation and push the result to stack
+            // double pop from the stack, apply concatenation and push the result to stack
             temp1 = nfa_stack_pop(nfa_stack);
             temp2 = nfa_stack_pop(nfa_stack);
             NFA *temp = nfa_concat(temp2, temp1);
             nfa_stack_push(nfa_stack, temp);
         
         } else if (symbol == '*') {
-            // double pop from the stack, apply operation and push the result to stack
+            // double pop from the stack, apply kleene star and push the result to stack
             temp1 = nfa_stack_pop(nfa_stack);
             NFA *temp = nfa_kleene(temp1);
             nfa_stack_push(nfa_stack, temp);
         
         } else {
-            // create the nfa and push it to the stack
+            // create a symbol nfa and push it to the stack
             NFA *temp = nfa_create(symbol);
             nfa_stack_push(nfa_stack, temp);
-            printf("created nfa by character and pushed\n");
-            nfa_print(temp);
         }    
     }
 
-    // there's only one element remaining which is the resulting nfa
+    // there's only one element remaining in the stack, which is our resulting nfa
     return nfa_stack_pop(nfa_stack);
 }
 
+/* Creates an nfa starting given the transition symbol */
 NFA* nfa_create(char symbol) {
     // create NFA
     NFA *_nfa = nfa(2, 1);
@@ -118,11 +142,9 @@ NFA* nfa_create(char symbol) {
 }
 
 
-/*  
-    ...
-*/
+/* Concatenates two nfas into a new one */
 NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
-    // creating the resulting NFA
+    // create the resulting NFA
     int result_states_no = nfa1->states_no + nfa2->states_no;
     int result_trans_no = nfa1->trans_no + nfa2->trans_no+1;
     NFA *result = nfa(result_states_no, result_trans_no);
@@ -134,10 +156,6 @@ NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
         result->states[j++] = nfa1->states[i];
     }
     for (i=0; i<nfa2->states_no; i++) {
-        // not adding nfa2 initial state since it's the same as nfa1 final
-        // if (nfa2->states[i] == nfa2->final_state) {
-        //     continue;
-        // }
         result->states[j++] = nfa2->states[i];
     }
 
@@ -149,14 +167,9 @@ NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
     }
     for (i=0; i<nfa2->trans_no; i++) {
         result->transitions[j++] = nfa2->transitions[i];
-        
-        // if (nfa2->transitions[i] == nfa2->initial_state) {
-        //     result->transitions[j-1]->src = nfa1->final_state;
-        // }
     }
 
-    // create new epsilon transition
-    // - connect nfa1.final to nfa2.initial
+    // create new epsilon transition: connect nfa1.final to nfa2.initial
     Edge *e = edge(nfa1->final_state, nfa2->initial_state, 'e');
     result->transitions[j] = e;
 
@@ -169,9 +182,7 @@ NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
     return result;
 }
 
-/*
-    ...
-*/
+/* Performs union operation between nfa1 and nfa2 */
 NFA* nfa_union(NFA *nfa1, NFA *nfa2) {
     // creating the resulting nfa
     int result_states_no = nfa1->states_no + nfa2->states_no + 2;       // adding two more states
@@ -227,13 +238,11 @@ NFA* nfa_union(NFA *nfa1, NFA *nfa2) {
     return result;
 }
 
-/*
-    ...
-*/
+/* Performs kleene star operation on nfa */
 NFA* nfa_kleene(NFA *_nfa) {
     // creating the resulting nfa
-    int result_states_no = _nfa->states_no + 2;       // adding two more states
-    int result_trans_no = _nfa->trans_no + 4;            // adding four more transitions
+    int result_states_no = _nfa->states_no + 2;             // adding two more states
+    int result_trans_no = _nfa->trans_no + 4;               // adding four more transitions
     NFA *result = nfa(result_states_no, result_trans_no);
 
     /* ===== STATES ===== */

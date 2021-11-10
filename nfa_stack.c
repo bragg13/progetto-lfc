@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "nfa_stack.h"
-#include "nfa.h"
-
 
 /* Initializes a stack. */
 NfaStack* init_nfa_stack(unsigned int capacity) {
@@ -10,6 +6,10 @@ NfaStack* init_nfa_stack(unsigned int capacity) {
     stack->capacity = capacity;
     stack->size = 0;
     stack->stack = malloc(sizeof(NFA*)*capacity);
+    if (stack == NULL) {
+        perror("Error creating stack.\n");
+        return NULL;
+    }
     return stack;
 }
 
@@ -17,24 +17,23 @@ NfaStack* init_nfa_stack(unsigned int capacity) {
 int nfa_stack_is_empty(NfaStack *stack) { return (stack->size == 0) ? 1 : 0; }
 int nfa_stack_is_full(NfaStack *stack) { return (stack->size == stack->capacity) ? 1 : 0; }
 
-/* Push function to add value to stack */
+/* Push function - adds nfa to stack */
 void nfa_stack_push(NfaStack *stack, NFA *nfa) {
     if (nfa_stack_is_full(stack)) {
-        printf("size > capacity");
+        perror("Stack size wouuld exceed capacity.\n");
         return;
     }
 
     int i = stack->size;
     stack->stack[i] = nfa;
     stack->size++;
-    // printf("pushed elemnt with id %d\n", num);
 }
 
 
-/* Push function to add value to stack */
+/* Pop function - pops element from stack */
 NFA* nfa_stack_pop(NfaStack *stack) {
     if (nfa_stack_is_empty(stack)) {
-        // printf("cant pop nothing");
+        perror("Stack size is 0, cannot pop.\n");
         return NULL;
     } 
 
@@ -44,10 +43,10 @@ NFA* nfa_stack_pop(NfaStack *stack) {
     return nfa;
 }
 
-/* Returns the element at the top without removing it */
+/* Returns the element at the top without popping it */
 NFA* nfa_stack_peek(NfaStack *stack) {
     if (nfa_stack_is_empty(stack)) {
-        // printf("cant peek");
+        perror("Stack size is 0, cannot peek.\n");
         return NULL;
     } 
 
@@ -59,7 +58,7 @@ NFA* nfa_stack_peek(NfaStack *stack) {
 
 /* Prints a stack structure */
 void print_nfa_stack(NfaStack *stack) {
-    printf("NfaStack: size=%d, capacity=%d\n", stack->size, stack->capacity);
+    printf("Stack: size=%d, capacity=%d [nfa]\n", stack->size, stack->capacity);
 
     int size = stack->size;
     int i;

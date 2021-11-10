@@ -1,7 +1,6 @@
 #include "reg_exp.h"
-// #include "set.h"
-#include "int_stack.h"
 
+/* utils function to get priority of an operator */
 int get_priority(char c) {
     int p;
     switch(c){
@@ -14,18 +13,11 @@ int get_priority(char c) {
     return p;
 }
 
-/* 
-    add '.' to explicit the concatenation operator to regular expressions which may not have it 
-    assuming to have an alphabet made of literals/numbers(?), each max 1 character
-    Return:
-        int - actual output string dimension, useful to reallocate
-*/
+/* adds '.' to explicit the concatenation operator to regular expressions which may not have it */
 char* add_explicit_concat(char *str) {
-    printf("add_explicit_concat started...\n");
-    
-    // allocate output string with crazy size, worst case: #dim literals concatenated, aka #dim-1 '.'
+    // allocate output string with worst case size: #dim literals concatenated, aka #dim-1 '.'
     unsigned int dim = strlen(str);
-    char *output = (char*) malloc(sizeof(char)*(dim*2));        // DEALLOC
+    char *output = (char*) malloc(sizeof(char)*(dim*2));
 
     int i, j=0;
     for (i=0; i<dim; i++) {
@@ -43,7 +35,6 @@ char* add_explicit_concat(char *str) {
             char next_char = str[i+1];
             if (next_char == '|' || next_char == '.' || next_char == ')' || next_char == '*') {
                 continue;
-
             } 
 
             output[j] = '.';
@@ -51,30 +42,29 @@ char* add_explicit_concat(char *str) {
         }
     }
     
-    // realloc strings so they match the right size
+    // reallocate strings so they match the right size
     output = realloc(output, sizeof(char)*(j+1));
-    output[j] = '\0';                                       // set string terminator
-    free(str);      // cancello la stringa che ho creato prima perche ritorno quella nuova con la lunghezza sistemata
     
-    printf("add_explicit_concat done.\n");
+    // add string terminator
+    output[j] = '\0';
+    
+    // cancello la stringa che ho creato prima perche ritorno quella nuova con la lunghezza sistemata
+    free(str);
+
     return output;
 }
 
 
-/* 
-    convert regular expression to postfix reverse polish notation 
-    the algorithm uses a stack, where I push symbols
-    and what is called dst_str represents my output queue
-*/
+/* convert regular expression to postfix reverse polish notation */
 char* infix_to_postfix(char *src_str) {
     // get string size
     int src_dim = strlen(src_str);
 
     // instantiate new string which will be the dest
-    char *dst_str = malloc(sizeof(char)*src_dim+1);     // DEALLOC
+    char *dst_str = malloc(sizeof(char)*src_dim+1);
 
     // create a stack where to put operators
-    IntStack *stack = init_int_stack(src_dim);         // max dimension
+    IntStack *stack = init_int_stack(src_dim);
 
     // iterate through expression
     int i, j=0;
@@ -112,7 +102,7 @@ char* infix_to_postfix(char *src_str) {
                 dst_str[j++] = popped_operator;
             }
 
-            // also pop the ')'
+            // now also pop the ')'
             int_stack_pop(stack);
 
         }
@@ -136,5 +126,4 @@ char* infix_to_postfix(char *src_str) {
     // free old string and return new one
     free(src_str);
     return dst_str;
-
 }

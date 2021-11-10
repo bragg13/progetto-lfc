@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "int_stack.h"
 
 /* utils function to get priority of an operator */
 int get_priority(char c);

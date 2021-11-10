@@ -1,7 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "nfa.h"
 
+/* Initializes an NFA structure */
 NFA* nfa(int states_no, int edges_no) {
     NFA *n = malloc(sizeof(NFA));
     n->states_no = states_no;
@@ -13,6 +12,7 @@ NFA* nfa(int states_no, int edges_no) {
     return n;
 }
 
+/* Initializes an Edge structure */
 Edge* edge(int initial_id, int final_id, char symbol) {
     Edge *e = malloc(sizeof(Edge));
     e->src = initial_id;
@@ -21,7 +21,7 @@ Edge* edge(int initial_id, int final_id, char symbol) {
     return e;
 }
 
-/* Print a NFA */
+/* Prints a NFA structure */
 void nfa_print(NFA *nfa) {
     printf("\n");
     int i;
@@ -45,18 +45,15 @@ void nfa_print(NFA *nfa) {
 
 }
 
-/* Free up memory by deallocating NFA */
+/* Frees up memory by deallocating NFA */
 void nfa_free(NFA *nfa) {
-    // deallocate states array
-    free(nfa->states);
+    free(nfa->states);                      // deallocate states array
 
-    // deallocate transitions array
     int i;
-    for(i=0; i<nfa->trans_no; i++) {
+    for(i=0; i<nfa->trans_no; i++) {        // deallocate transitions array
         free(nfa->transitions[i]);
     }
     free(nfa->transitions);
 
-    // deallocate nfa itself
-    free(nfa);
+    free(nfa);                              // deallocate nfa itself
 }

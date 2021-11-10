@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "int_stack.h"
-
 
 /* Initializes a stack. */
 IntStack* init_int_stack(unsigned int capacity) {
@@ -9,6 +6,10 @@ IntStack* init_int_stack(unsigned int capacity) {
     stack->capacity = capacity;
     stack->size = 0;
     stack->stack = (int*) malloc(sizeof(int)*capacity);
+    if (stack == NULL) {
+        perror("Error creating stack.\n");
+        return NULL;
+    }
     return stack;
 }
 
@@ -16,24 +17,23 @@ IntStack* init_int_stack(unsigned int capacity) {
 int int_stack_is_empty(IntStack *stack) { return (stack->size == 0) ? 1 : 0; }
 int int_stack_is_full(IntStack *stack) { return (stack->size == stack->capacity) ? 1 : 0; }
 
-/* Push function to add value to stack */
+/* Push function - adds value to stack */
 void int_stack_push(IntStack *stack, int num) {
     if (int_stack_is_full(stack)) {
-        printf("size > capacity");
+        perror("Stack size wouuld exceed capacity.\n");
         return;
     }
 
     int i = stack->size;
     stack->stack[i] = num;
     stack->size++;
-    // printf("pushed elemnt with id %d\n", num);
 }
 
 
-/* Push function to add value to stack */
+/* Pop function - pops element from stack */
 int int_stack_pop(IntStack *stack) {
     if (int_stack_is_empty(stack)) {
-        // printf("cant pop nothing");
+        perror("Stack size is 0, cannot pop.\n");
         return -1;
     } 
 
@@ -43,10 +43,10 @@ int int_stack_pop(IntStack *stack) {
     return num;
 }
 
-/* Returns the element at the top without removing it */
+/* Returns the element at the top without popping it */
 int int_stack_peek(IntStack *stack) {
     if (int_stack_is_empty(stack)) {
-        // printf("cant peek");
+        perror("Stack size is 0, cannot peek.\n");
         return -1;
     } 
 
@@ -58,7 +58,7 @@ int int_stack_peek(IntStack *stack) {
 
 /* Prints a stack structure */
 void print_int_stack(IntStack *stack, int is_char) {
-    printf("IntStack: size=%d, capacity=%d\n", stack->size, stack->capacity);
+    printf("Stack: size=%d, capacity=%d [int]\n", stack->size, stack->capacity);
 
     int size = stack->size;
     int i;

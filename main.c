@@ -22,6 +22,12 @@ int main(int argc, char **argv) {
     NFA *final_nfa = nfa_build(str);
     nfa_print(final_nfa);
 
+    // write output
+    write_output(final_nfa);
+
+    // free up memory
+    
+
     printf("\n");
     return 0;
 }
