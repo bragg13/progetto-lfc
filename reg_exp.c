@@ -26,8 +26,7 @@ char* add_explicit_concat(char *str) {
     // allocate output string with crazy size, worst case: #dim literals concatenated, aka #dim-1 '.'
     unsigned int dim = strlen(str);
     char *output = (char*) malloc(sizeof(char)*(dim*2));        // DEALLOC
-    
-    // TODO: reduce this bloatcode
+
     int i, j=0;
     for (i=0; i<dim; i++) {
         // add the char to output

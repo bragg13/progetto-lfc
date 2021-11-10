@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include "nfa.h"
 
-// void eps_closure(State start_state, NFA *nfa, Set *closure_set /*TODO: int symbol*/);
 
 /* input management */
 char* get_input();
@@ -20,8 +19,5 @@ NFA* nfa_kleene(NFA* nfa1);
 /* function prototypes */
 void nfa_print(NFA *nfa);
 
-// void nfa_get_initial_state(NFA *nfa, Set *set);
-
-// State get_state_by_id(NFA *nfa, int id);
 
 #endif // end THOMPSON_CONSTRUCTION_H

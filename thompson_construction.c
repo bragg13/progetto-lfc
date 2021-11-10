@@ -28,11 +28,25 @@ char* get_input() {
         return NULL;
     }
 
-    char *str = malloc(sizeof(char)*length+1);      // DEALLOC
+    char *str = malloc(sizeof(char)*length+1);
     fscanf(fp, "%s", str);
     fclose(fp);
 
     str[length] = '\0';
+
+    // check if letters/numbers
+    int i=0;
+    char c;
+    for (i; i<length; i++) {
+        c = (char) str[i];
+        if ( (c>='A' && c<='Z') || (c>='a' && c<='z') || (c>='0' && c<='9') || c=='(' || c==')' || c=='|' || c=='.' || c=='*') {
+            continue;
+        }
+        printf("char: %c\n", c);
+        perror("found an invalid character in the alphabet\n");
+        return NULL;
+    }
+
     return str;
 }
 
@@ -110,7 +124,7 @@ NFA* nfa_create(char symbol) {
 NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
     // creating the resulting NFA
     int result_states_no = nfa1->states_no + nfa2->states_no;
-    int result_trans_no = nfa1->trans_no + nfa2->trans_no+1;    // adding one more transition
+    int result_trans_no = nfa1->trans_no + nfa2->trans_no+1;
     NFA *result = nfa(result_states_no, result_trans_no);
 
     /* ===== STATES ===== */
@@ -120,6 +134,10 @@ NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
         result->states[j++] = nfa1->states[i];
     }
     for (i=0; i<nfa2->states_no; i++) {
+        // not adding nfa2 initial state since it's the same as nfa1 final
+        // if (nfa2->states[i] == nfa2->final_state) {
+        //     continue;
+        // }
         result->states[j++] = nfa2->states[i];
     }
 
@@ -131,6 +149,10 @@ NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
     }
     for (i=0; i<nfa2->trans_no; i++) {
         result->transitions[j++] = nfa2->transitions[i];
+        
+        // if (nfa2->transitions[i] == nfa2->initial_state) {
+        //     result->transitions[j-1]->src = nfa1->final_state;
+        // }
     }
 
     // create new epsilon transition

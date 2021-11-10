@@ -55,3 +55,5 @@ Rules:
     
 
 [from Wikipedia, https://en.wikipedia.org/wiki/Thompson%27s_construction]
+
+support only literals and one-digit numbers as alphabet
