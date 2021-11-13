@@ -7,39 +7,73 @@
 > - che tipo di strutture dati sono state utilizzate per memorizzare grammatiche e/o automi e/o tabelle e/o altri elementi rilevanti al caso (facoltativo)
 > - che tipo di test sono stati fatti (facoltativo)
 
-## `nfa.h` e `set.c`
-Definizione ed implementazione di un NFA attraverso un grafo orientato.
 
-#### `struct NFA`
-Definito da un intero che indica il numero di stati presenti ed un array che conterrà gli stati.
+## Introduction
+C implementation of algorithm to parse a regular expression and generate from it a non-deterministic finite(?) automaton, i.e. Thompson Construction.
 
-#### `struct State`
-Definito da due interi, indicanti il numero di transizioni uscenti e l'id dello stato, da un enumeratore che indica il tipo di stato (iniziale, standard o finale) e da un array di transizioni uscenti.
+The original Thompson definition is recursive, and defines an NFA as made of (?) two states, one initial and one final, connected through a transition which may have an epsilon value or a value from the recognized alphabet.
 
-#### `struct Edge`
-Definito da tre valori interi, che indicano lo stato sorgente, lo stato destinazione e il simbolo della transizione.
+Then we can perform three different operation on NFAs: 
+- union, represented by the symbol |
+- concatenation, represented by the symbol . (which can be implicit)(?)
+- kleene start, represented by the symbol *
 
-#### `void get_input(NFA *nfa)`
-Funzione che apre un file "input.txt" dove dev'essere contenuta una rappresentazione numerica dell'NFA; il file viene analizzato e sulla sua base viene costruito l'automa.
+There are also two parenthesis symbols, ( and ), used to explicitly specify priority order.
 
-#### `void print_nfa(NFA *nfa)`
-Funzione che prende in input un NFA e ne stampa gli attributi.
+The algorithm first checks if the given expression has implicit concatenation symbols to add, then converts it into a more convenient postfix format.
 
-#### `int free_memory(NFA *nfa)`
-Funzione che dealloca un NFA per liberare la memoria.
+At this point, it iterates through the given expression and
+- if there's an operatio symbol, pushes it
+- creates an NFA outherwise
 
-<br>
-
-## `set.h` e `set.c`
-Definizione e implementazione di un Set attraverso un array.
-
-####
-
-## stack.h e stack.c
-
-## subset_construction.h e subset_construction.c
+...
 
 
+## Input
+The input must be given as a .txt file. By default, the program will look for a file called "input.txt": this can be overidden(?) by using the option "-i" and specifying a different file.
+
+The input file contains two lines: 
+- first one: integer - represents the number of characters in the following line
+- second one: string - represents a regular expression
+
+Allowed characters in input are:
+- letters a-z
+- letters A-Z
+- digits  0-9
+- operation symbols | . + ( )
+
+
+## Output
+The output is given as a .txt file. By default, the name of this file will be "output.txt": this can be overidden(?) by using the option "-o" and specifying a different file.
+
+The output file contains a variable number of lines and can be given in two different styles, default or human-readable:
+
+- ### Default
+
+- ### Human-readable
+    - the first and last line are just decoration lines
+    - the second line contains the ID of the initial NFA state
+    - the third line contains the ID of the final NFA state
+    - the fourth line contains the list of states i.e. a list of integers each one being a state ID
+    - from sixth line forward(?) are listed transitions, unordered, and the pattern is `<source state id> -- <transition value> --> <destiation state id>`
+
+
+## Constrains
+
+## Implementation - Data Structures
+
+## Implementation - Tests performed
+
+## Notes about the code
+
+## Console help
+```
+Usage: 
+    -i <path> specify a file to use as input file
+    -o <path> specify a file to use as output file
+    -hr use human-readable output
+    -h display this message"
+```
 
 
 The implementation is based on original Ken Thompson's
@@ -66,3 +100,8 @@ Rules:
 support only literals and one-digit numbers as alphabet
 
 removing input length from input was an option but turned out to be more expensive than useful
+
+
+TODO: epsilon needs to be different from e orelse I cant use e even tho is in the alphabet
+TODO: output non-hr
+TODO: maybe I could order the output?

@@ -5,7 +5,7 @@
 #include "thompson_construction.h"
 #include "reg_exp.h"
 #include "getopt.h"
-#define USAGE_STR "Usage:\n-i <path> specify a file to use as input file\n -o <path> specify a file to use as output file\n -t use tabular output\n -h display this message\n"
+#define USAGE_STR "Usage:\n-i <path> specify a file to use as input file\n -o <path> specify a file to use as output file\n -h use human-readable output\n -h display this message\n"
 #define MAX_FILE_LEN 50
 
 int main(int argc, char **argv) {
