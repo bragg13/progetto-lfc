@@ -3,12 +3,12 @@
 int state_id = 0;
 
 /* Reads input file and returns the string in it */
-char* get_input() {
+char* get_input(char *input_str) {
     FILE *fp;
     int length;
 
     // open the file
-    fp = fopen("input.txt", "r");
+    fp = fopen(input_str, "r");
     if (fp == NULL) {
         perror("Failed opening file");
         return NULL;
@@ -45,12 +45,12 @@ char* get_input() {
 }
 
 /* Write NFA to output file */
-void write_output(NFA *nfa) {
+void write_output(NFA *nfa, char *output_str) {
     FILE *fp;
     int i;
 
     // open the file
-    fp = fopen("output.txt", "w");
+    fp = fopen(output_str, "w");
     if (fp == NULL) {
         perror("Failed opening file");
         return;

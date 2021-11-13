@@ -1,4 +1,11 @@
-# Progetto di LFC - Subset Construction
+# Progetto di LFC - Thompson Construction
+
+
+> Il report accompagnatorio deve essere un pdf in cui si specificano:
+> - come fornire l'input (obbligatorio)
+> - come leggere l'output (obbligatorio)
+> - che tipo di strutture dati sono state utilizzate per memorizzare grammatiche e/o automi e/o tabelle e/o altri elementi rilevanti al caso (facoltativo)
+> - che tipo di test sono stati fatti (facoltativo)
 
 ## `nfa.h` e `set.c`
 Definizione ed implementazione di un NFA attraverso un grafo orientato.

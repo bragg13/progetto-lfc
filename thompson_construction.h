@@ -9,8 +9,8 @@
 #include "nfa_stack.h"
 
 /* I/O management */
-char* get_input();
-void write_output(NFA *nfa);
+char* get_input(char *input_str);
+void write_output(NFA *nfa, char *output_str);
 
 /* NFA basics */
 NFA* nfa_build(char *reg_exp);
