@@ -5,18 +5,18 @@
 #include "thompson_construction.h"
 #include "reg_exp.h"
 #include "getopt.h"
-#define USAGE_STR "Usage:\n-i <path> specify a file to use as input file\n -o <path> specify a file to use as output file\n -h use human-readable output\n -h display this message\n"
+#define USAGE_STR "Usage:\n-i <path> specify a file to use as input file\n -o <path> specify a file to use as output file\n -H use human-readable output\n -h display this message\n"
 #define MAX_FILE_LEN 50
 
 int main(int argc, char **argv) {
     char c;
     char input_file[MAX_FILE_LEN], output_file[MAX_FILE_LEN];
     int custom_in=0, custom_out=0;
-    int format_type = 0; // 0 default | 1 tabular
+    int output_type = 0; // 0 default | 1 fancy
 
     /* ===== ARGs PARSER =====*/
     if (argc > 1) {
-        while( (c = getopt(argc, argv, "i:o:t")) != -1) {
+        while( (c = getopt(argc, argv, "i:o:Hh")) != -1) {
             switch(c){
                 case 'i':
                     strcpy(input_file, optarg);
@@ -26,8 +26,8 @@ int main(int argc, char **argv) {
                     strcpy(output_file, optarg);
                     custom_out = 1;
                     break;
-                case 't':
-                    format_type = 1;
+                case 'H':
+                    output_type = 1;
                     break;
                 case 'h':
                     printf("%s\n", USAGE_STR);
@@ -67,14 +67,9 @@ int main(int argc, char **argv) {
     nfa_print(final_nfa);
 
     // write output
-    write_output(final_nfa, output_file);
+    write_output(final_nfa, output_file, output_type);
 
-    // free up memory
-    
 
     printf("\n");
     return 0;
 }
-
-
-// TODO: if a number is in input is converted to char

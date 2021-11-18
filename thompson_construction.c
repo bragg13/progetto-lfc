@@ -45,7 +45,7 @@ char* get_input(char *input_str) {
 }
 
 /* Write NFA to output file */
-void write_output(NFA *nfa, char *output_str) {
+void write_output(NFA *nfa, char *output_str, int output_type) {
     FILE *fp;
     int i;
 
@@ -56,23 +56,40 @@ void write_output(NFA *nfa, char *output_str) {
         return;
     }
 
-    // prints to file the nfa
-    fprintf(fp, "========== OUTPUT NFA ==========\n");
-    fprintf(fp, "| Initial state: %d\n| Final state: %d\n", nfa->initial_state, nfa->final_state);
-    
-    fprintf(fp, "| States: [ ");
-    for (i=0; i<nfa->states_no; i++) {
-        fprintf(fp, "%d ", nfa->states[i]);
-    }
-    fprintf(fp, "]\n");
-    fprintf(fp, "| Transitions: \n");
-    
-    for (i=0; i<nfa->trans_no; i++) {
-        Edge *e = nfa->transitions[i];
-        fprintf(fp, "| %d -- %c --> %d\n", e->src, e->val, e->dst);
-    }
+    if (output_type == 0) {
+        // initial/final states
+        fprintf(fp, "%d %d\n", nfa->initial_state, nfa->final_state);
+        
+        // states
+        for (i=0; i<nfa->states_no; i++) {
+            fprintf(fp, "%d ", nfa->states[i]);
+        }
+        fprintf(fp, "\n");
 
-    fprintf(fp, "================================\n");
+        // transitions
+        for (i=0; i<nfa->trans_no; i++) {
+            Edge *e = nfa->transitions[i];
+            fprintf(fp, "%d %d %c\n", e->src, e->dst, e->val);
+        }
+    } else {
+        // prints to file the nfa
+        fprintf(fp, "========== OUTPUT NFA ==========\n");
+        fprintf(fp, "| Initial state: %d\n| Final state: %d\n", nfa->initial_state, nfa->final_state);
+        
+        fprintf(fp, "| States: [ ");
+        for (i=0; i<nfa->states_no; i++) {
+            fprintf(fp, "%d ", nfa->states[i]);
+        }
+        fprintf(fp, "]\n");
+        fprintf(fp, "| Transitions: \n");
+        
+        for (i=0; i<nfa->trans_no; i++) {
+            Edge *e = nfa->transitions[i];
+            fprintf(fp, "| %d -- %c --> %d\n", e->src, e->val, e->dst);
+        }
+
+        fprintf(fp, "================================\n");
+    }
 
     fclose(fp);
 }

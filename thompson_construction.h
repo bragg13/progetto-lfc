@@ -10,7 +10,7 @@
 
 /* I/O management */
 char* get_input(char *input_str);
-void write_output(NFA *nfa, char *output_str);
+void write_output(NFA *nfa, char *output_str, int output_type);
 
 /* NFA basics */
 NFA* nfa_build(char *reg_exp);

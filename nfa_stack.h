@@ -12,7 +12,7 @@ typedef struct NfaStack {
 } NfaStack;
 
 /* basic functions */
-NfaStack* init_nfa_stack(unsigned int capacity);
+NfaStack* init_nfa_stwack(unsigned int capacity);
 void print_nfa_stack(NfaStack *stack);
 void nfa_stack_push(NfaStack *stack, NFA *nfa);
 NFA* nfa_stack_pop(NfaStack *stack);

@@ -11,7 +11,7 @@
 ## Introduction
 C implementation of algorithm to parse a regular expression and generate from it a non-deterministic finite(?) automaton, i.e. Thompson Construction.
 
-The original Thompson definition is recursive, and defines an NFA as made of (?) two states, one initial and one final, connected through a transition which may have an epsilon value or a value from the recognized alphabet.
+The original Thompson definition is recursive, and defines an NFA as made of (?) two states, one initial and one final, connected through a transition which may have an epsilon value (for whom I decided to use the '#' symbol) or a value from the recognized alphabet.
 
 Then we can perform three different operation on NFAs: 
 - union, represented by the symbol |
@@ -40,7 +40,7 @@ Allowed characters in input are:
 - letters a-z
 - letters A-Z
 - digits  0-9
-- operation symbols | . + ( )
+- operation symbols | . + ( ) #
 
 
 ## Output
@@ -49,6 +49,9 @@ The output is given as a .txt file. By default, the name of this file will be "o
 The output file contains a variable number of lines and can be given in two different styles, default or human-readable:
 
 - ### Default
+    - the first line contains two integers representing the initial and the final state IDs
+    - the second line contains the list of states i.e. a list of integers each one being a state ID
+    - from sixth line forward(?) are listed transitions, unordered; each line has three integers, representing the source state, the destination state and the transition value
 
 - ### Human-readable
     - the first and last line are just decoration lines
@@ -61,6 +64,22 @@ The output file contains a variable number of lines and can be given in two diff
 ## Constrains
 
 ## Implementation - Data Structures
+- ### Stack (node/int)
+    The stack implementation is basically the same for the integer one and the NFA one, the differences are only related to the different data type.
+
+    The structure is made of an array (of integers or pointers to NFA) where elements get stored, one integer for capacity and one for current size (and thus also the index of the head element).
+
+    Since I don't know the capacity a priori, there's a method to dynamically initialize the stack using malloc; hence, there is also a method to free up the memory. 
+    The other methods are normal stack methods, and are briefly described with comments.s 
+
+- ### NFA
+    NFA is defined as a structure resembling a graph. 
+    There are two integers to store the number of states and transitions; there is an array of integers, to store states, and an array of pointers to Edge, to store transitions; there are two integers to store the id of initial and final states.
+
+    It contains a method to initialize an NFA dynamically and two methods for printing and memory freeing.
+
+- ### Edge
+    Edge is a structure representing a transition. It just contains two integers to store the soource and destination states, and a char to store the value of the transition.
 
 ## Implementation - Tests performed
 
@@ -71,7 +90,7 @@ The output file contains a variable number of lines and can be given in two diff
 Usage: 
     -i <path> specify a file to use as input file
     -o <path> specify a file to use as output file
-    -hr use human-readable output
+    -H use human-readable output
     -h display this message"
 ```
 
@@ -105,3 +124,5 @@ removing input length from input was an option but turned out to be more expensi
 TODO: epsilon needs to be different from e orelse I cant use e even tho is in the alphabet
 TODO: output non-hr
 TODO: maybe I could order the output?
+TODO: unsigned and const
+TODO: free up method for stack
