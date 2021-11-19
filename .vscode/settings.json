@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "stdlib.h": "c",
+        "subset_construction.h": "c",
+        "thompson_construction.h": "c"
+    }
+}
