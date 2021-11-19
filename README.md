@@ -121,8 +121,3 @@ support only literals and one-digit numbers as alphabet
 removing input length from input was an option but turned out to be more expensive than useful
 
 
-TODO: epsilon needs to be different from e orelse I cant use e even tho is in the alphabet
-TODO: output non-hr
-TODO: maybe I could order the output?
-TODO: unsigned and const
-TODO: free up method for stack

@@ -34,7 +34,7 @@ char* get_input(char *input_str) {
     char c;
     for (i; i<length; i++) {
         c = (char) str[i];
-        if ( (c>='A' && c<='Z') || (c>='a' && c<='z') || (c>='0' && c<='9') || c=='(' || c==')' || c=='|' || c=='.' || c=='*') {
+        if ( (c>='A' && c<='Z') || (c>='a' && c<='z') || (c>='0' && c<='9') || c=='(' || c==')' || c=='|' || c=='.' || c=='*' || c=='#') {
             continue;
         }
         perror("found an invalid character in the alphabet\n");
@@ -162,33 +162,50 @@ NFA* nfa_create(char symbol) {
 /* Concatenates two nfas into a new one */
 NFA* nfa_concat(NFA *nfa1, NFA *nfa2) {
     // create the resulting NFA
-    int result_states_no = nfa1->states_no + nfa2->states_no;
-    int result_trans_no = nfa1->trans_no + nfa2->trans_no+1;
+    int result_states_no = nfa1->states_no + nfa2->states_no-1;     // i'm deleting a state
+    int result_trans_no = nfa1->trans_no + nfa2->trans_no;
     NFA *result = nfa(result_states_no, result_trans_no);
 
+    // the new state
+    int merged_state = state_id++;
+
     /* ===== STATES ===== */
-    // copy nfa states into result states
+    // copy nfa states into result states, but not final1 and initial2 since i'm merging them 
     int i, j=0;
     for (i=0; i<nfa1->states_no; i++) {
-        result->states[j++] = nfa1->states[i];
+        if (nfa1->states[i] != nfa1->final_state) {
+            result->states[j++] = nfa1->states[i];
+        }
     }
     for (i=0; i<nfa2->states_no; i++) {
-        result->states[j++] = nfa2->states[i];
+        if (nfa2->states[i] != nfa2->initial_state) {
+            result->states[j++] = nfa2->states[i];
+        }
     }
 
     /* ===== EDGES ===== */
-    // copy nfa transitions into result transitions
+    // copy nfa transitions into result transitions 
+    // since i'm merging initial/final state to merged_state, all
+    // transitions starting/ending in it have to be adapted
     j=0;
     for (i=0; i<nfa1->trans_no; i++) {
+        if (nfa1->transitions[i]->src == nfa1->final_state) {
+            nfa1->transitions[i]->src = merged_state;
+        }
+        if (nfa1->transitions[i]->dst == nfa1->final_state) {
+            nfa1->transitions[i]->dst = merged_state;
+        }
         result->transitions[j++] = nfa1->transitions[i];
     }
     for (i=0; i<nfa2->trans_no; i++) {
+        if (nfa2->transitions[i]->src == nfa2->initial_state) {
+            nfa2->transitions[i]->src = merged_state;
+        }
+        if (nfa2->transitions[i]->dst == nfa2->initial_state) {
+            nfa2->transitions[i]->dst = merged_state;
+        }
         result->transitions[j++] = nfa2->transitions[i];
     }
-
-    // create new epsilon transition: connect nfa1.final to nfa2.initial
-    Edge *e = edge(nfa1->final_state, nfa2->initial_state, 'e');
-    result->transitions[j] = e;
 
     // result.initial is now nfa1.inital
     result->initial_state = nfa1->initial_state;
@@ -237,19 +254,19 @@ NFA* nfa_union(NFA *nfa1, NFA *nfa2) {
 
     // create 4 epsilon transitions
     // - connect result.initial to nfa1.initial
-    Edge *e1 = edge(result->initial_state, nfa1->initial_state, 'e');
+    Edge *e1 = edge(result->initial_state, nfa1->initial_state, '#');
     result->transitions[j++] = e1;
     
     // - connect result.initial to nfa2.initial
-    Edge *e2 = edge(result->initial_state, nfa2->initial_state, 'e');
+    Edge *e2 = edge(result->initial_state, nfa2->initial_state, '#');
     result->transitions[j++] = e2;
 
     // - connect nfa1.final to result.final
-    Edge *e3 = edge(nfa1->final_state, result->final_state, 'e');
+    Edge *e3 = edge(nfa1->final_state, result->final_state, '#');
     result->transitions[j++] = e3;
     
     // - connect nfa2.final to result.final
-    Edge *e4 = edge(nfa2->final_state, result->final_state, 'e');
+    Edge *e4 = edge(nfa2->final_state, result->final_state, '#');
     result->transitions[j++] = e4;
     
     return result;
@@ -286,19 +303,19 @@ NFA* nfa_kleene(NFA *_nfa) {
 
     // create 4 epsilon transitions
     // - connect result.initial to nfa.initial
-    Edge *e1 = edge(result->initial_state, _nfa->initial_state, 'e');
+    Edge *e1 = edge(result->initial_state, _nfa->initial_state, '#');
     result->transitions[j++] = e1;
     
     // - connect new.initial to new.final
-    Edge *e2 = edge(result->initial_state, result->final_state, 'e');
+    Edge *e2 = edge(result->initial_state, result->final_state, '#');
     result->transitions[j++] = e2;
     
     // - connect nfa.final to nfa.inital
-    Edge *e3 = edge(_nfa->final_state, _nfa->initial_state, 'e');
+    Edge *e3 = edge(_nfa->final_state, _nfa->initial_state, '#');
     result->transitions[j++] = e3;
     
     // - connect nfa.final to new.final
-    Edge *e4 = edge(_nfa->final_state, result->final_state, 'e');
+    Edge *e4 = edge(_nfa->final_state, result->final_state, '#');
     result->transitions[j++] = e4;
 
     return result;
