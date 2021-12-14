@@ -1,6 +1,6 @@
 {
     "files.associations": {
-        "stdlib.h": "c",
-        "subset_construction.h": "c"
+        "nfa_stack.h": "c",
+        "nfa.h": "c"
     }
 }

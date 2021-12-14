@@ -1,5 +1,4 @@
-# Progetto di LFC - Thompson Construction
-
+# LFC - Thompson Construction
 
 > Il report accompagnatorio deve essere un pdf in cui si specificano:
 > - come fornire l'input (obbligatorio)
@@ -9,59 +8,65 @@
 
 
 ## Introduction
-C implementation of algorithm to parse a regular expression and generate from it a non-deterministic finite(?) automaton, i.e. Thompson Construction.
+The following project is a C implementation of algorithm to parse a regular expression and generate from it a non-deterministic automaton, i.e. Thompson Construction.
 
-The original Thompson definition is recursive, and defines an NFA as made of (?) two states, one initial and one final, connected through a transition which may have an epsilon value (for whom I decided to use the '#' symbol) or a value from the recognized alphabet.
+The original Thompson definition is recursive, and defines an NFA as a structure made of two states, an initial one and a final one, connected through a transition which may have an epsilon value (for whom I decided to use the '#' symbol) or a value from the recognized alphabet.
 
 Then we can perform three different operation on NFAs: 
-- union, represented by the symbol |
-- concatenation, represented by the symbol . (which can be implicit)(?)
-- kleene start, represented by the symbol *
+- **union**, represented by the symbol |
+- **concatenation**, represented by the symbol . (which can be implicit)
+- **kleene start**, represented by the symbol *
 
 There are also two parenthesis symbols, ( and ), used to explicitly specify priority order.
 
-The algorithm first checks if the given expression has implicit concatenation symbols to add, then converts it into a more convenient postfix format.
+The algorithm is split up in three steps:
 
-At this point, it iterates through the given expression and
-- if there's an operatio symbol, pushes it
-- creates an NFA outherwise
+1. we first check if the given expression has **implicit concatenation**: if that is the case, we explicit it;
 
-...
+2. then, we **convert** the resulting expression into a more convenient **postfix format**;
 
+3. at this point, the actual algorithm begins and iterates through the expression:
+    - if the symbol represents an **operation**, then we pop the first two elements (or only the first one, in the case of kleene star), **apply the specified operation**, and finally push the resulting NFA to stack 
+    - otherwise, we **create an NFA** with the transition having the specified symbol as value 
+
+<br>
 
 ## Input
-The input must be given as a .txt file. By default, the program will look for a file called "input.txt": this can be overidden(?) by using the option "-i" and specifying a different file.
+The input must be given as a .txt file. 
+By default, the program will look for a file called "input.txt": this can be overidden by using the option "-i" and specifying a different file.
 
-The input file contains two lines: 
-- first one: integer - represents the number of characters in the following line
-- second one: string - represents a regular expression
+The input file must contain two lines: 
+- first one: *integer* - represents the number of characters in the following line [1]
+- second one: *string* - represents a regular expression
 
 Allowed characters in input are:
 - letters a-z
 - letters A-Z
 - digits  0-9
-- operation symbols | . + ( ) #
+- operation symbols | . + ( ) 
+- epsilon symbol #
 
+<br>
 
 ## Output
-The output is given as a .txt file. By default, the name of this file will be "output.txt": this can be overidden(?) by using the option "-o" and specifying a different file.
+The output is given as a .txt file. 
+By default, the name of this file will be "output.txt": this can be overidden by using the option "-o" and specifying a different file.
 
 The output file contains a variable number of lines and can be given in two different styles, default or human-readable:
 
 - ### Default
     - the first line contains two integers representing the initial and the final state IDs
-    - the second line contains the list of states i.e. a list of integers each one being a state ID
-    - from sixth line forward(?) are listed transitions, unordered; each line has three integers, representing the source state, the destination state and the transition value
+    - the second line contains the list of states i.e. a list of integers, each one being a state ID
+    - from sixth line forward are listed transitions, unordered [2]; each line has three integers, representing the source state, the destination state and the transition value
 
 - ### Human-readable
     - the first and last line are just decoration lines
     - the second line contains the ID of the initial NFA state
     - the third line contains the ID of the final NFA state
     - the fourth line contains the list of states i.e. a list of integers each one being a state ID
-    - from sixth line forward(?) are listed transitions, unordered, and the pattern is `<source state id> -- <transition value> --> <destiation state id>`
+    - from sixth line forward are listed transitions, unordered, and the pattern is `<source state id> -- <transition value> --> <destiation state id>`
 
-
-## Constrains
+<br>
 
 ## Implementation - Data Structures
 - ### Stack (node/int)
@@ -84,6 +89,15 @@ The output file contains a variable number of lines and can be given in two diff
 ## Implementation - Tests performed
 
 ## Notes about the code
+- The states could be not sequential because of the concatenation operation, which merges two states into a new merged one.
+
+- Variables in regular expressions are one-letter only.
+
+- [1] Specifying the number of characters in the next line could have been omitted and replaced with a modification of the get_input function; however, it would have been trickier to read the input expression because of memory allocation for the string: I don't think the improvement would be worth.
+
+- [2] Ordering the output could have been implemented, but I found it to be not worth too.
+
+<br>
 
 ## Console help
 ```
@@ -94,35 +108,14 @@ Usage:
     -h display this message"
 ```
 
+<br>
 
-The implementation is based on original Ken Thompson's
-The algorithm aims to transform a regular expression into an equivalent NFA (non deterministic finite automaton)
-It works recursively taking as input a regular expression casted to postfix notation through the *** algorithm.
-It parses the regular expression into its constituient subespressions, then applies operators to connect them into a bigger one.
+## Credits
+Andrea Bragante - andrea.bragante@studenti.unitn.it
 
-BASIS:
-The automaton of the word "a" can be defined as:
-    2 1     # 2 states, 1 transition
-    i 0 1   # state name: i, initial, 1 transition out
-    f 2 0   
-    i f 0   # trans type: eps, from i to f
+<br>
 
-INDUCTION:
-Having t
-
-Rules:
-    - the number of transitions leaving any state is max 2
-    
-
-[from Wikipedia, https://en.wikipedia.org/wiki/Thompson%27s_construction]
-
-support only literals and one-digit numbers as alphabet
-
-removing input length from input was an option but turned out to be more expensive than useful
-
-
-TODO: epsilon needs to be different from e orelse I cant use e even tho is in the alphabet
-TODO: output non-hr
-TODO: maybe I could order the output?
+```
 TODO: unsigned and const
 TODO: free up method for stack
+```
