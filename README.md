@@ -70,12 +70,12 @@ The output file contains a variable number of lines and can be given in two diff
 
 ## Implementation - Data Structures
 - ### Stack (node/int)
-    The stack implementation is basically the same for the integer one and the NFA one, the differences are only related to the different data type.
+    The stack implementation is basically the same for the integer one and the NFA one, the differences are only related to data types.
 
     The structure is made of an array (of integers or pointers to NFA) where elements get stored, one integer for capacity and one for current size (and thus also the index of the head element).
 
     Since I don't know the capacity a priori, there's a method to dynamically initialize the stack using malloc; hence, there is also a method to free up the memory. 
-    The other methods are normal stack methods, and are briefly described with comments.s 
+    The other functions are normal stack methods, and are briefly described with comments. 
 
 - ### NFA
     NFA is defined as a structure resembling a graph. 
@@ -86,7 +86,21 @@ The output file contains a variable number of lines and can be given in two diff
 - ### Edge
     Edge is a structure representing a transition. It just contains two integers to store the soource and destination states, and a char to store the value of the transition.
 
+
+- ### Regular Expression
+    Regular expressions are not represented through a struct, since they basically are strings. However, there are three functions to deal with them.
+
+
 ## Implementation - Tests performed
+I tested the whole program with a bunch of regular expressions and manually checked whether the result was correct or not.
+The following are the tested expressions along with the input file name, located in the `test` folder:
+
+- `(0|1)*1`, input1.txt
+- ``, input2.txt
+- ``, input3.txt
+- ``, input4.txt
+- ``, input5.txt
+
 
 ## Notes about the code
 - The states could be not sequential because of the concatenation operation, which merges two states into a new merged one.
@@ -95,7 +109,7 @@ The output file contains a variable number of lines and can be given in two diff
 
 - [1] Specifying the number of characters in the next line could have been omitted and replaced with a modification of the get_input function; however, it would have been trickier to read the input expression because of memory allocation for the string: I don't think the improvement would be worth.
 
-- [2] Ordering the output could have been implemented, but I found it to be not worth too.
+- [2] Ordering the output could have been implemented, but I found it to be not worth it too.
 
 <br>
 
