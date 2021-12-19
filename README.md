@@ -36,7 +36,7 @@ Allowed characters in input are:
 - letters a-z
 - letters A-Z
 - digits  0-9
-- operation symbols | . + ( ) 
+- operation symbols | . * ( )
 - epsilon symbol #
 
 <br>
@@ -45,7 +45,7 @@ Allowed characters in input are:
 The output is given as a .txt file. 
 By default, the name of this file will be "output.txt": this can be overidden by using the option "-o" and specifying a different file.
 
-The output file contains a variable number of lines and can be given in two different styles, default or human-readable:
+The output file contains a variable number of lines and can be given in two different styles, default or human-readable, each ordered or unordered:
 
 - ### Default
     - the first line contains two integers representing the initial and the final state IDs
