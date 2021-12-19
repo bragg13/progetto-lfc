@@ -1,12 +1,5 @@
 # LFC - Thompson Construction
 
-> Il report accompagnatorio deve essere un pdf in cui si specificano:
-> - come fornire l'input (obbligatorio)
-> - come leggere l'output (obbligatorio)
-> - che tipo di strutture dati sono state utilizzate per memorizzare grammatiche e/o automi e/o tabelle e/o altri elementi rilevanti al caso (facoltativo)
-> - che tipo di test sono stati fatti (facoltativo)
-
-
 ## Introduction
 The following project is a C implementation of algorithm to parse a regular expression and generate from it a non-deterministic automaton, i.e. Thompson Construction.
 
@@ -57,7 +50,7 @@ The output file contains a variable number of lines and can be given in two diff
 - ### Default
     - the first line contains two integers representing the initial and the final state IDs
     - the second line contains the list of states i.e. a list of integers, each one being a state ID
-    - from sixth line forward are listed transitions, unordered [2]; each line has three integers, representing the source state, the destination state and the transition value
+    - from sixth line forward are listed transitions; each line has three integers, representing the source state, the destination state and the transition value
 
 - ### Human-readable
     - the first and last line are just decoration lines
@@ -65,6 +58,11 @@ The output file contains a variable number of lines and can be given in two diff
     - the third line contains the ID of the final NFA state
     - the fourth line contains the list of states i.e. a list of integers each one being a state ID
     - from sixth line forward are listed transitions, unordered, and the pattern is `<source state id> -- <transition value> --> <destiation state id>`
+
+- ### Ordered/Unordered
+    By default, output is unordered, so transitions are printed out as they were stored during the procedure.
+    Although this can lead to confusion when checking the output NFA, it is indeed faster.
+    However, it is possible to get an ordered output specifing `-O` option: topological sort algorithm is run on the NFA, resulting in a Stack which provides an extraction order for states. Then, output is printed according to it, but because of how NFA structure is implemented this requires more processing and hence adds complexity. 
 
 <br>
 
@@ -112,8 +110,6 @@ The following are the tested expressions along with the input file name, located
 
 - [1] Specifying the number of characters in the next line could have been omitted and replaced with a modification of the get_input function; however, it would have been trickier to read the input expression because of memory allocation for the string: I don't think the improvement would be worth.
 
-- [2] Ordering the output could have been implemented, but I found it to be not worth it too.
-
 <br>
 
 ## Console help
@@ -121,6 +117,7 @@ The following are the tested expressions along with the input file name, located
 Usage: 
     -i <path> specify a file to use as input file
     -o <path> specify a file to use as output file
+    -O use ordered output
     -H use human-readable output
     -h display this message"
 

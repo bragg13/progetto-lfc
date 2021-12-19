@@ -46,7 +46,7 @@ char* get_input(char *input_str) {
 }
 
 /* Write NFA to output file */
-void write_output(NFA *nfa, char *output_str, int output_type) {
+void write_output(NFA *nfa, char *output_str, int output_type, int output_order_type) {
     FILE *fp;
     int i;
 
@@ -56,6 +56,7 @@ void write_output(NFA *nfa, char *output_str, int output_type) {
         perror("Failed opening file");
         return;
     }
+
 
     if (output_type == 0) {
         // initial/final states
@@ -68,10 +69,35 @@ void write_output(NFA *nfa, char *output_str, int output_type) {
         fprintf(fp, "\n");
 
         // transitions
-        for (i=0; i<nfa->trans_no; i++) {
-            Edge *e = nfa->transitions[i];
-            fprintf(fp, "%d %d %c\n", e->src, e->dst, e->val);
+        if (output_order_type == 1) {
+            // compute ordered output
+            IntStack *s = init_int_stack(nfa->final_state);
+            topsort(nfa, s);
+
+            // pop one by one states in the stack
+            int i, state;
+            int stack_size = s->size;
+            for (i=0; i<stack_size; i++) {
+                state = int_stack_pop(s);
+
+                // foreach state, print transitions having it as source node
+                int j;
+                for (j=0; j<nfa->trans_no; j++) {
+                    if (nfa->transitions[j]->src == state) {
+                        Edge *e = nfa->transitions[j];
+                        fprintf(fp, "%d %d %c\n", e->src, e->dst, e->val);
+                    }
+                }
+            }
+
+        } else {
+            // print unordered output
+            for (i=0; i<nfa->trans_no; i++) {
+                Edge *e = nfa->transitions[i];
+                fprintf(fp, "%d %d %c\n", e->src, e->dst, e->val);
+            }
         }
+
     } else {
         // prints to file the nfa
         fprintf(fp, "========== OUTPUT NFA ==========\n");
@@ -84,16 +110,45 @@ void write_output(NFA *nfa, char *output_str, int output_type) {
         fprintf(fp, "]\n");
         fprintf(fp, "| Transitions: \n");
         
-        for (i=0; i<nfa->trans_no; i++) {
-            Edge *e = nfa->transitions[i];
-            fprintf(fp, "| %d -- %c --> %d\n", e->src, e->val, e->dst);
-        }
+        // transitions
+        if (output_order_type == 1) {
+            // compute ordered output
+            IntStack *s = init_int_stack(nfa->final_state);
+            topsort(nfa, s);
+            print_int_stack(s, 0);
 
+            // pop one by one states in the stack
+            int i, state;
+            int stack_size = s->size;
+            for (i=0; i<stack_size; i++) {
+                state = int_stack_pop(s);
+
+                // foreach state, print transitions having it as source node
+                int j;
+                for (j=0; j<nfa->trans_no; j++) {
+                    if (nfa->transitions[j]->src == state) {
+                        Edge *e = nfa->transitions[j];
+                        fprintf(fp, "| %d -- %c --> %d\n", e->src, e->val, e->dst);
+                    }
+                }
+
+            }
+
+        } else {
+            // print unordered output
+            for (i=0; i<nfa->trans_no; i++) {
+                Edge *e = nfa->transitions[i];
+                fprintf(fp, "| %d -- %c --> %d\n", e->src, e->val, e->dst);
+            }
+        }
         fprintf(fp, "================================\n");
+
     }
 
     fclose(fp);
 }
+
+
 
 /* Given a string, parse it and through Thompson Construction builds an nfa */
 NFA* nfa_build(char *reg_exp) {

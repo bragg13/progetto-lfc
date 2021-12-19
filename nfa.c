@@ -57,3 +57,47 @@ void nfa_free(NFA *nfa) {
 
     free(nfa);                              // deallocate nfa itself
 }
+
+/* Topological sort algorithm */
+void topsort(NFA *nfa, IntStack *s) {
+    int max_number = nfa->final_state+1;    // final state is the highest possible state id (itself, that's why the +1) in the nfa
+    int visited[max_number];
+
+    // set visited to false
+    int i;
+    for (i=0; i<=max_number; i++) {
+        visited[i] = 0;
+    }
+
+    // iterate through states; if not visited yet, visit it
+    int state;
+    for (i=0; i<nfa->states_no; i++) {
+        state = nfa->states[i];
+        if (visited[state] == 0) {
+            topsort_rec(nfa, s, visited, state);
+        }
+    }
+}
+
+/* Recursive part for topological sort */
+void topsort_rec(NFA *nfa, IntStack *s, int *visited, int i) {
+    // visit the node
+    visited[i] = 1;
+
+    // iterare through all transitions looking for adjacents to i
+    int j, dest;
+    for (j=0; j<nfa->trans_no; j++) {
+
+        // if a node is adjacent to i and it's not visited yet, visit it
+        if (nfa->transitions[j]->src == i) {
+            dest = nfa->transitions[j]->dst;
+
+            if (visited[dest] == 0) {
+                topsort_rec(nfa, s, visited, dest);
+            }
+        }
+    }
+
+    // push node to stack
+    int_stack_push(s, i);
+}

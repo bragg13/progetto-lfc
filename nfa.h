@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "int_stack.h"
 
 /* define structures */
 typedef struct NFA {
@@ -28,5 +29,9 @@ Edge *edge(int initial_id, int final_id, char symbol);
 /* Other functions */
 void nfa_print(NFA *nfa);
 void nfa_free(NFA *nfa);
+
+/* Topsort implementation for ordered output */
+void topsort(NFA *nfa, IntStack *s);
+void topsort_rec(NFA *nfa, IntStack *s, int *visited, int i);
 
 #endif
