@@ -89,17 +89,20 @@ The output file contains a variable number of lines and can be given in two diff
 
 - ### Regular Expression
     Regular expressions are not represented through a struct, since they basically are strings. However, there are three functions to deal with them.
+    - `get_priotity`, used to retrieve the priority of a given operator
+    - `add_explicit_concat`, used to add an explicit concat symbol
+    - `infix_to_postfix`, used to convert the expression to postfix notation
 
 
 ## Implementation - Tests performed
 I tested the whole program with a bunch of regular expressions and manually checked whether the result was correct or not.
 The following are the tested expressions along with the input file name, located in the `test` folder:
 
-- `(0|1)*1`, input1.txt
-- ``, input2.txt
-- ``, input3.txt
-- ``, input4.txt
-- ``, input5.txt
+- `abc`, input1.txt
+- `(0|1)*1`, input2.txt
+- `(#|a*b)`, input3.txt
+- `(a|b)*abb`, input4.txt
+- `b*(a|b|#)*`, input5.txt
 
 
 ## Notes about the code
@@ -120,16 +123,14 @@ Usage:
     -o <path> specify a file to use as output file
     -H use human-readable output
     -h display this message"
+
+Example:
+    ./app.out - Launch app with file input.txt 
+    ./app.out -H -i test/input1.txt - Launch app with file test/input1.txt and writing output in human readable mode
+    ./app.out -o test/output.txt - Launch app with file input.txt and writing output in default mode in file test/output.txt
 ```
 
 <br>
 
 ## Credits
 Andrea Bragante - andrea.bragante@studenti.unitn.it
-
-<br>
-
-```
-TODO: unsigned and const
-TODO: free up method for stack
-```

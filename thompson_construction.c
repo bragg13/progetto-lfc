@@ -11,7 +11,7 @@ char* get_input(char *input_str) {
     fp = fopen(input_str, "r");
     if (fp == NULL) {
         perror("Failed opening file");
-        return NULL;
+        exit(-1);
     }
 
     // read string length

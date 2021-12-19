@@ -52,23 +52,23 @@ int main(int argc, char **argv) {
 
     // get input
     char *str = get_input(input_file);
-    printf("%s\n", str);
+    printf("%s\n", str);             // DEBUG
 
     // add explicit concatenation to input string
     str = add_explicit_concat(str);
-    printf("%s\n", str);
+    printf("%s\n", str);             // DEBUG
 
     // transform the expression to postfix
     str = infix_to_postfix(str);
-    printf("%s\n", str);
+    printf("%s\n", str);             // DEBUG
 
     // construct the NFA
     NFA *final_nfa = nfa_build(str);
-    nfa_print(final_nfa);
+    nfa_print(final_nfa);             // DEBUG
 
     // write output
     write_output(final_nfa, output_file, output_type);
-
+    nfa_free(final_nfa);
 
     printf("\n");
     return 0;

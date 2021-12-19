@@ -20,7 +20,7 @@ int int_stack_is_full(IntStack *stack) { return (stack->size == stack->capacity)
 /* Push function - adds value to stack */
 void int_stack_push(IntStack *stack, int num) {
     if (int_stack_is_full(stack)) {
-        perror("Stack size wouuld exceed capacity.\n");
+        perror("Stack size would exceed capacity.\n");
         return;
     }
 

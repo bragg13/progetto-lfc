@@ -1,11 +1,10 @@
 win:
 	@echo Compiling code...
 	@gcc -o app.exe *.c 
-	@echo Compile done. Launching app...
-	@./app.exe
+	@echo Compile done.
+
 linux:
 	@echo Compiling code...
 	@gcc -o app.out *.c 
-	@echo Compile done. Launching app...
-	@./app.out
+	@echo Compile done.
 
