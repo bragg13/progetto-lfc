@@ -130,4 +130,4 @@ Example:
 <br>
 
 ## Credits
-Andrea Bragante - andrea.bragante@studenti.unitn.it
+Andrea Bragante - andrea.bragante00@gmail.com
